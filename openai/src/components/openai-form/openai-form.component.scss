@@ -1,0 +1,21 @@
+:host {
+    display: flex;
+
+    input[type="text"] {
+        border-top-left-radius: 0.3rem;
+        border-bottom-left-radius: 0.3rem;
+    }
+
+    .btn {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        font-size: 2rem;
+        color: var(--anu-accent-deep-light);
+        margin-left: -2px;
+        padding: 0rem 1.5rem 0rem 1.5rem;
+    }
+
+    .prompt-types {
+        max-width: 10rem;
+    }
+}
