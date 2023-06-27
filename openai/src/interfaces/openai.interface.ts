@@ -1,4 +1,4 @@
-import { OpenaiPromptType } from "../enums/openai.enums";
+import { OpenaiPromptTypeEnum } from "../enums/openai.enums";
 
 export interface OpenaiConfig {
     apiKey: string;
@@ -14,7 +14,7 @@ export enum OpenaiImageSize {
 export interface OpenaiPrompt {
     prompt: string;
     message?: OpenaiMessage;
-    promptType?: OpenaiPromptType;
+    promptType?: OpenaiPromptTypeEnum;
 };
 
 export interface OpenaiMessage {

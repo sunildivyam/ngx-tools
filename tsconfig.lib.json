@@ -6,7 +6,21 @@
     "declaration": true,
     "declarationMap": true,
     "inlineSources": true,
-    "types": []
+    "types": [],
+    "paths": {
+      "@annuadvent/ngx-common-ui": [
+        "dist/ngx-common-ui"
+      ],
+      "@annuadvent/ngx-common-ui/*": [
+        "dist/ngx-common-ui/*"
+      ],
+      "@annuadvent/ngx-core": [
+        "dist/ngx-core"
+      ],
+      "@annuadvent/ngx-core/*": [
+        "dist/ngx-core/*"
+      ],
+    }
   },
   "exclude": [
     "**/*.spec.ts"

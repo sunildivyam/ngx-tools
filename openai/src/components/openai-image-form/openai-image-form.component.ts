@@ -50,4 +50,6 @@ export class OpenaiImageFormComponent {
     this.loading = false;
     this.errorMsg = err;
   }
+
+  public uploadImage() { }
 }
