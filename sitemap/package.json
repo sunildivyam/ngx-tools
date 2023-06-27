@@ -1,9 +1,9 @@
 {
-	"name": "openai",
+	"name": "sitemap",
 	"version": "0.0.1",
 	"license": "MIT",
-	"description": "Angular @annuadvent/ngx-tools/openai components library module",
-	"homepage": "https://github.com/sunildivyam/ngx-tools/openai",
+	"description": "Angular @annuadvent/ngx-tools/sitemap components library module",
+	"homepage": "https://github.com/sunildivyam/ngx-tools/sitemap",
 	"bugs": "https://github.com/sunildivyam/ngx-tools/issues",
 	"repository": {
 		"type": "git",

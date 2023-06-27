@@ -1,4 +1,4 @@
 
-# @annuadvent/ngx-openai/openai
+# @annuadvent/ngx-tools/openai
 
-Annu Advent @annuadvent/ngx-openai/openai Angular Library module.
+Annu Advent @annuadvent/ngx-tools/openai Angular Library module.
