@@ -1,0 +1,24 @@
+{
+	"name": "fire-categories",
+	"version": "0.0.1",
+	"license": "MIT",
+	"description": "Angular @annuadvent/ngx-tools/fire-categories components library module",
+	"homepage": "https://github.com/sunildivyam/ngx-tools/fire-categories",
+	"bugs": "https://github.com/sunildivyam/ngx-tools/issues",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/sunildivyam/ngx-tools.git"
+	},
+	"engines": {
+		"node": "18.16.0",
+		"npm": "9.5.1"
+	},
+	"peerDependencies": {
+		"@angular/common": "^16.1.0",
+		"@angular/core": "^16.1.0"
+	},
+	"dependencies": {
+		"tslib": "^2.3.0"
+	},
+	"sideEffects": false
+}
