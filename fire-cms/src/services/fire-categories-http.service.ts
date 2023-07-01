@@ -418,8 +418,6 @@ export class FireCategoriesHttpService {
   }
 
   public async addCategory(category: Category): Promise<Category> {
-    const fieldsToUpdate = [...UPDATE_CATEGORY_FIELDS, 'isLive'];
-
     const existedCategory = await this.getCategory(category.id).catch(
       (error: any) => {
         if (error.status === 404) {
