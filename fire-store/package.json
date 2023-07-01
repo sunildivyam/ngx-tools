@@ -15,7 +15,8 @@
 	},
 	"peerDependencies": {
 		"@angular/common": "^16.1.0",
-		"@angular/core": "^16.1.0"
+		"@angular/core": "^16.1.0",
+		"@annuadvent/ngx-core": "^1.0.0"
 	},
 	"dependencies": {
 		"tslib": "^2.3.0"

@@ -1,9 +1,9 @@
 {
-	"name": "fire-categories",
+	"name": "fire-cms",
 	"version": "0.0.1",
 	"license": "MIT",
-	"description": "Angular @annuadvent/ngx-tools/fire-categories components library module",
-	"homepage": "https://github.com/sunildivyam/ngx-tools/fire-categories",
+	"description": "Angular @annuadvent/ngx-tools/fire-cms components library module",
+	"homepage": "https://github.com/sunildivyam/ngx-tools/fire-cms",
 	"bugs": "https://github.com/sunildivyam/ngx-tools/issues",
 	"repository": {
 		"type": "git",

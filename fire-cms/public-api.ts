@@ -1,4 +1,4 @@
 
     // Export all exposable angular assets from ./src folder, like components, services, pipes, directives etc.
-    export * from './src/fire-articles.module';
+    export * from './src/fire-cms.module';
     

@@ -15,7 +15,7 @@ export interface FireOrderField {
 
 export interface FireQuery {
     collectionId: string;
-    selectFields: Array<string>;
+    selectFields?: Array<string>;
     where?: Array<FireQueryFilter>;
     orderBy?: Array<FireOrderField>;
     isForwardDir?: boolean;
