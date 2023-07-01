@@ -58,70 +58,6 @@ export class FireCategoriesHttpService {
     return pageCategories;
   }
 
-  public async runQueryToUpdate(
-    category: Category,
-    fieldsToUpdate: Array<string>,
-    isBin: boolean = false
-  ): Promise<Category> {
-    if (!category || !category.id)
-      throw new Error('Please provide a valid category.');
-    const currentDate = this.utilsSvc.currentDate;
-    const pCategory = { ...category, updated: currentDate };
-    pCategory.metaInfo['article:published_time'] = currentDate;
-    if (!pCategory.created) pCategory.created = currentDate;
-    if (!pCategory.userId)
-      pCategory.userId = this.fireAuthSvc.getCurrentUserId();
-    delete pCategory.id;
-
-    return new Promise((resolve, reject) => {
-      const url = `${this.firestoreApiUrl}/${isBin === true
-        ? ARTICLES_COLLECTIONS.CATEGORIES_BIN
-        : ARTICLES_COLLECTIONS.CATEGORIES
-        }/${category.id}`;
-      const body = this.firestoreParser.buildFirebaseFields(
-        pCategory,
-        fieldsToUpdate
-      );
-      const params =
-        this.firestoreParser.buildQueryParamsToUpdate(fieldsToUpdate);
-
-      const httpSubscription = this.http
-        .patch(url, body, { params })
-        .subscribe({
-          next: (cat: any) => {
-            const updatedCategory: Category = this.firestoreParser.parse(
-              cat
-            ) as Category;
-            httpSubscription.unsubscribe();
-            resolve(updatedCategory);
-          },
-          error: reject,
-        });
-    });
-  }
-
-  public async runQueryToDelete(category: Category): Promise<boolean> {
-    if (!category || !category.id)
-      throw new Error('Please provide a valid category.');
-
-    return new Promise((resolve, reject) => {
-      // Move category to categories-bin first then delete it from categories db.
-      this.runQueryToUpdate(category, null, true)
-        .then(() => {
-          const url = `${this.firestoreApiUrl}/${ARTICLES_COLLECTIONS.CATEGORIES}/${category.id}`;
-          // Deletes from categories db.
-          const httpSubscription = this.http.delete(url).subscribe({
-            next: (res: any) => {
-              httpSubscription.unsubscribe();
-              resolve(true);
-            },
-            error: reject,
-          });
-        })
-        .catch(reject);
-    });
-  }
-
   public async getCategory(categoryId: string): Promise<Category> {
     try {
       const category: Category = await this.firestoreHttpService.runQueryById(CATEGORIES_COLLECTION_ID, categoryId);
@@ -483,9 +419,7 @@ export class FireCategoriesHttpService {
 
   public async addCategory(category: Category): Promise<Category> {
     const fieldsToUpdate = [...UPDATE_CATEGORY_FIELDS, 'isLive'];
-    // Any modification to a category, will bring it to unpublished, and not up for review.
-    category.isLive = false;
-    category.inReview = false;
+
     const existedCategory = await this.getCategory(category.id).catch(
       (error: any) => {
         if (error.status === 404) {
@@ -496,21 +430,28 @@ export class FireCategoriesHttpService {
       }
     );
     if (existedCategory) throw new Error('Category already Exist.');
-    return this.runQueryToUpdate(category, fieldsToUpdate).catch((error) => {
-      throw error;
-    });
+
+    return this.updateCategory(category)
+      .catch((error) => {
+        throw error;
+      });
   }
 
   public async updateCategory(category: Category): Promise<Category> {
     const fieldsToUpdate = [...UPDATE_CATEGORY_FIELDS, 'isLive'];
 
     // Any modification to a category, will bring it to unpublished, and not up for review.
-    category.isLive = false;
-    category.inReview = false;
+    const currentDate = this.utilsSvc.currentDate;
+    const pCategory = { ...category, updated: currentDate, isLive: false, inReview: false };
+    pCategory.metaInfo['article:published_time'] = currentDate;
+    if (!pCategory.created) pCategory.created = currentDate;
+    if (!pCategory.userId)
+      pCategory.userId = this.fireAuthSvc.getCurrentUserId();
 
-    return this.runQueryToUpdate(category, fieldsToUpdate).catch((error) => {
-      throw error;
-    });
+    return this.firestoreHttpService.runQueryToUpdate(CATEGORIES_COLLECTION_ID, pCategory, fieldsToUpdate, false)
+      .catch((error) => {
+        throw error;
+      });
   }
 
   public async setCategoryUpForReview(category: Category): Promise<Category> {
@@ -519,9 +460,10 @@ export class FireCategoriesHttpService {
     // Any modification to a category, will bring it to unpublished, and not up for review.
     category.isLive = category.inReview === true ? false : category.isLive;
 
-    return this.runQueryToUpdate(category, fieldsToUpdate).catch((error) => {
-      throw error;
-    });
+    return this.firestoreHttpService.runQueryToUpdate(CATEGORIES_COLLECTION_ID, category, fieldsToUpdate, false)
+      .catch((error) => {
+        throw error;
+      });
   }
 
   public async setCategoryLive(category: Category): Promise<Category> {
@@ -531,12 +473,13 @@ export class FireCategoriesHttpService {
 
     category.inReview = category.isLive === true ? false : category.inReview;
 
-    return this.runQueryToUpdate(category, fieldsToUpdate).catch((error) => {
-      throw error;
-    });
+    return this.firestoreHttpService.runQueryToUpdate(CATEGORIES_COLLECTION_ID, category, fieldsToUpdate, false)
+      .catch((error) => {
+        throw error;
+      });
   }
 
   public async deleteCategory(category: Category): Promise<boolean> {
-    return this.runQueryToDelete(category);
+    return this.firestoreHttpService.runQueryToDelete(CATEGORIES_COLLECTION_ID, category);
   }
 }
