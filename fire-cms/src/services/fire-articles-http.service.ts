@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Category } from '../interfaces/fire-categories.interface';
 import { Article } from '../interfaces/fire-articles.interface';
-import { LibConfig } from '@annuadvent/ngx-core/app-config';
 import { PageCategoryGroup } from '../interfaces/fire-categories.interface';
 import { PageArticles } from '../interfaces/fire-articles.interface';
 import {
@@ -11,17 +10,18 @@ import {
 } from '../constants/fire-articles-http.contants';
 import { UtilsService } from '@annuadvent/ngx-core/utils';
 import { FireOrderField, FireQuery, FireQueryFilter, FirestoreHttpService, StructuredQueryOperatorEnum, StructuredQueryValueType } from '@annuadvent/ngx-tools/fire-store';
+import { FireCommonService } from '@annuadvent/ngx-tools/fire-common';
 
 @Injectable()
 export class FireArticlesHttpService {
   firestoreApiUrl: string = '';
 
   constructor(
-    private libConfig: LibConfig,
+    private fireCommonService: FireCommonService,
     private utilsSvc: UtilsService,
     private firestoreHttpService: FirestoreHttpService,
   ) {
-    this.firestoreApiUrl = this.libConfig.firestoreBaseApiUrl;
+    this.firestoreApiUrl = this.fireCommonService.firebaseConfig.store.firestoreBaseApiUrl;
   }
 
   private async buildPageOfArticles(

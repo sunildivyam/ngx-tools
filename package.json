@@ -20,7 +20,9 @@
     "xml-js": "^1.6.11",
     "@annuadvent/ngx-core": "^1.0.0",
     "@annuadvent/ngx-common-ui": "^1.0.0",
-    "firebase": "^9.23.0"
+    "firebase": "^9.23.0",
+    "compressorjs": "^1.2.1",
+    "firebaseui": "^6.0.2"
   },
   "dependencies": {
     "tslib": "^2.3.0"

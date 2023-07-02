@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { LibConfig } from '@annuadvent/ngx-core/app-config';
 import { UtilsService } from '@annuadvent/ngx-core/utils';
 import { Category } from '../interfaces/fire-categories.interface';
 
@@ -22,18 +21,19 @@ import {
   PageCategoryGroup,
 } from '../interfaces/fire-categories.interface';
 import { FireArticlesHttpService } from './fire-articles-http.service';
+import { FireCommonService } from '@annuadvent/ngx-tools/fire-common';
 
 @Injectable()
 export class FireCategoriesHttpService {
   firestoreApiUrl: string = '';
 
   constructor(
-    private libConfig: LibConfig,
+    private fireCommonService: FireCommonService,
     private utilsSvc: UtilsService,
     private firestoreHttpService: FirestoreHttpService,
     private fireArticlesHttpService: FireArticlesHttpService,
   ) {
-    this.firestoreApiUrl = this.libConfig.firestoreBaseApiUrl;
+    this.firestoreApiUrl = this.fireCommonService.firebaseConfig.store.firestoreBaseApiUrl;
   }
 
   private async buildPageOfCategories(

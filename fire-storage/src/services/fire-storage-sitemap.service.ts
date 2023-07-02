@@ -1,19 +1,21 @@
 import { Injectable } from '@angular/core';
-import { LibConfig } from '@annuadvent/ngx-core/app-config';
 import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage';
-import { CommonFirebaseService } from '@annuadvent/ngx-tools/fire-common';
+import { FireCommonService } from '@annuadvent/ngx-tools/fire-common';
 import { sitemapFileName } from '../constants/fire-storagee-sitemap.constants';
 
 @Injectable()
 export class FireStorageSitemapService {
   public sitemapFileName: string = sitemapFileName;
 
-  constructor(private commonFireSvc: CommonFirebaseService, private libConfig: LibConfig) {
+  constructor(private fireCommonService: FireCommonService) {
 
   }
 
   public async uploadSitemap(sitemapData: string): Promise<boolean> {
-    const fireStorage = getStorage(this.commonFireSvc.initOrGetFirebaseApp(), this.libConfig.firebase.storageBucket);
+    const fireStorage = getStorage(
+      this.fireCommonService.initOrGetFirebaseApp(),
+      this.fireCommonService.firebaseConfig.app.storageBucket
+    );
     const fileRef = ref(fireStorage, this.sitemapFileName);
 
     try {
@@ -25,7 +27,10 @@ export class FireStorageSitemapService {
   }
 
   public async sitemapExists(): Promise<string> {
-    const fireStorage = getStorage(this.commonFireSvc.initOrGetFirebaseApp(), this.libConfig.firebase.storageBucket);
+    const fireStorage = getStorage(
+      this.fireCommonService.initOrGetFirebaseApp(),
+      this.fireCommonService.firebaseConfig.app.storageBucket
+    );
     const fileRef = ref(fireStorage, this.sitemapFileName);
 
     try {

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { LibConfig } from '@annuadvent/ngx-core/app-config';
+import { FireCommonService } from '@annuadvent/ngx-tools/fire-common';
 import { FirestoreParserService } from './firestore-parser.service';
 import { FireQuery } from '../interfaces/fire-query.interface';
 import { FirestoreQueryService } from './firestore-query.service';
@@ -11,12 +11,12 @@ export class FirestoreHttpService {
   firestoreApiUrl: string = '';
 
   constructor(
-    private libConfig: LibConfig,
+    private fireCommonService: FireCommonService,
     private http: HttpClient,
     private firestoreParser: FirestoreParserService,
     private firestoreQueryService: FirestoreQueryService,
   ) {
-    this.firestoreApiUrl = this.libConfig.firestoreBaseApiUrl;
+    this.firestoreApiUrl = this.fireCommonService.firebaseConfig.store.firestoreBaseApiUrl;
   }
 
   public async runQueryById(collectionId: string, id: string): Promise<any> {
