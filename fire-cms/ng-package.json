@@ -3,9 +3,6 @@
 	"dest": "../../../dist/ngx-tools/fire-cms",
 	"lib": {
 		"entryFile": "./public-api.ts",
-		"cssUrl": "inline",
-		"styleIncludePaths": [
-			"../scss"
-		]
+		"cssUrl": "inline"
 	}
 }

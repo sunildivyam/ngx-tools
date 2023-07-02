@@ -1,9 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Category } from '@annuadvent/ngx-cms/category';
-import {
-  Article,
-  ArticleFeatures,
-} from '@annuadvent/ngx-cms/article';
+import { Category } from '../interfaces/fire-categories.interface';
+import { Article } from '../interfaces/fire-articles.interface';
 import { LibConfig } from '@annuadvent/ngx-core/app-config';
 import { PageCategoryGroup } from '../interfaces/fire-categories.interface';
 import { PageArticles } from '../interfaces/fire-articles.interface';
@@ -13,13 +10,9 @@ import {
   UPDATE_ARTICLE_FIELDS,
 } from '../constants/fire-articles-http.contants';
 import { UtilsService } from '@annuadvent/ngx-core/utils';
-import { AuthFirebaseService } from '@annuadvent/ngx-tools/fire-auth';
-import { FireCategoriesHttpService } from './fire-categories-http.service';
-import { FirestoreHttpService } from '@annuadvent/ngx-tools/fire-store';
+import { FireOrderField, FireQuery, FireQueryFilter, FirestoreHttpService, StructuredQueryOperatorEnum, StructuredQueryValueType } from '@annuadvent/ngx-tools/fire-store';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class FireArticlesHttpService {
   firestoreApiUrl: string = '';
 
@@ -27,8 +20,6 @@ export class FireArticlesHttpService {
     private libConfig: LibConfig,
     private utilsSvc: UtilsService,
     private firestoreHttpService: FirestoreHttpService,
-    private fireCategoriesHttpService: FireCategoriesHttpService,
-    private fireAuthSvc: AuthFirebaseService,
   ) {
     this.firestoreApiUrl = this.libConfig.firestoreBaseApiUrl;
   }
@@ -62,10 +53,24 @@ export class FireArticlesHttpService {
   public async getLiveArticle(articleId: string): Promise<Article> {
     if (!articleId) throw new Error('Please provide a valid article id.');
 
-    const fireQuery: QueryConfig = {
-      id: articleId,
-      isLive: true,
+    const fireQuery: FireQuery = {
+      collectionId: ARTICLES_COLLECTION_ID,
+      where: [
+        {
+          fieldPath: 'id',
+          operator: StructuredQueryOperatorEnum.EQUAL,
+          value: articleId,
+          valueType: StructuredQueryValueType.stringValue
+        } as FireQueryFilter,
+        {
+          fieldPath: 'isLive',
+          operator: StructuredQueryOperatorEnum.EQUAL,
+          value: true,
+          valueType: StructuredQueryValueType.booleanValue
+        } as FireQueryFilter,
+      ],
     };
+
     try {
       const articles = await this.firestoreHttpService.runQueryByConfig(fireQuery);
       const article = articles?.length ? articles[0] : null;
@@ -83,9 +88,22 @@ export class FireArticlesHttpService {
     if (!articleId) throw new Error('Please provide a valid article id.');
     if (!userId) throw new Error('Please provide a valid article id.');
 
-    const fireQuery: QueryConfig = {
-      id: articleId,
-      userId,
+    const fireQuery: FireQuery = {
+      collectionId: ARTICLES_COLLECTION_ID,
+      where: [
+        {
+          fieldPath: 'id',
+          operator: StructuredQueryOperatorEnum.EQUAL,
+          value: articleId,
+          valueType: StructuredQueryValueType.stringValue
+        } as FireQueryFilter,
+        {
+          fieldPath: 'userId',
+          operator: StructuredQueryOperatorEnum.EQUAL,
+          value: userId,
+          valueType: StructuredQueryValueType.stringValue
+        } as FireQueryFilter,
+      ],
     };
 
     try {
@@ -105,20 +123,38 @@ export class FireArticlesHttpService {
     startPage: string | null = null,
     isForwardDir: boolean = true
   ): Promise<PageArticles> {
-    const articlesQueryConfig: QueryConfig = {
-      isLive,
-      userId,
-      orderField: 'updated',
-      orderFieldType: StructuredQueryValueType.stringValue,
-      startPage,
+
+    const fireQuery: FireQuery = {
+      collectionId: ARTICLES_COLLECTION_ID,
+      where: [
+        {
+          fieldPath: 'userId',
+          operator: StructuredQueryOperatorEnum.EQUAL,
+          value: userId,
+          valueType: StructuredQueryValueType.stringValue
+        } as FireQueryFilter,
+        {
+          fieldPath: 'isLive',
+          operator: StructuredQueryOperatorEnum.EQUAL,
+          value: isLive,
+          valueType: StructuredQueryValueType.booleanValue
+        } as FireQueryFilter,
+      ],
+      orderBy: [
+        {
+          fieldPath: 'updated',
+          fieldType: StructuredQueryValueType.stringValue,
+          isDesc: true
+        } as FireOrderField
+      ],
+      selectFields: SHALLOW_ARTICLE_FIELDS,
       pageSize,
       isForwardDir,
-      isDesc: true,
-      selectFields: SHALLOW_ARTICLE_FIELDS,
+      startPage: [startPage]
     };
 
     try {
-      const articles = await this.firestoreHttpService.runQueryByConfig(articlesQueryConfig);
+      const articles = await this.firestoreHttpService.runQueryByConfig(fireQuery);
 
       return await this.buildPageOfArticles(articles, pageSize);
     } catch (error: any) {
@@ -132,19 +168,32 @@ export class FireArticlesHttpService {
     startPage: string | null = null,
     isForwardDir: boolean = true
   ): Promise<PageArticles> {
-    const articlesQueryConfig: QueryConfig = {
-      isLive,
-      orderField: 'updated',
-      orderFieldType: StructuredQueryValueType.stringValue,
-      startPage,
+
+    const fireQuery: FireQuery = {
+      collectionId: ARTICLES_COLLECTION_ID,
+      where: [
+        {
+          fieldPath: 'isLive',
+          operator: StructuredQueryOperatorEnum.EQUAL,
+          value: isLive,
+          valueType: StructuredQueryValueType.booleanValue
+        } as FireQueryFilter,
+      ],
+      orderBy: [
+        {
+          fieldPath: 'updated',
+          fieldType: StructuredQueryValueType.stringValue,
+          isDesc: true
+        } as FireOrderField
+      ],
+      selectFields: SHALLOW_ARTICLE_FIELDS,
       pageSize,
       isForwardDir,
-      isDesc: true,
-      selectFields: SHALLOW_ARTICLE_FIELDS,
+      startPage: [startPage]
     };
 
     try {
-      const articles = await this.firestoreHttpService.runQueryByConfig(articlesQueryConfig);
+      const articles = await this.firestoreHttpService.runQueryByConfig(fireQuery);
 
       return await this.buildPageOfArticles(articles, pageSize);
     } catch (error: any) {
@@ -158,20 +207,38 @@ export class FireArticlesHttpService {
     startPage: string | null = null,
     isForwardDir: boolean = true
   ): Promise<PageArticles> {
-    const articlesQueryConfig: QueryConfig = {
-      isLive: null, // null | false | true equals in review | offline | live
-      userId,
-      orderField: 'updated',
-      orderFieldType: StructuredQueryValueType.stringValue,
-      startPage,
+
+    const fireQuery: FireQuery = {
+      collectionId: ARTICLES_COLLECTION_ID,
+      where: [
+        {
+          fieldPath: 'userId',
+          operator: StructuredQueryOperatorEnum.EQUAL,
+          value: userId,
+          valueType: StructuredQueryValueType.stringValue
+        } as FireQueryFilter,
+        {
+          fieldPath: 'isLive',
+          operator: StructuredQueryOperatorEnum.EQUAL,
+          value: null,
+          valueType: StructuredQueryValueType.booleanValue
+        } as FireQueryFilter,
+      ],
+      orderBy: [
+        {
+          fieldPath: 'updated',
+          fieldType: StructuredQueryValueType.stringValue,
+          isDesc: true
+        } as FireOrderField
+      ],
+      selectFields: SHALLOW_ARTICLE_FIELDS,
       pageSize,
       isForwardDir,
-      isDesc: true,
-      selectFields: SHALLOW_ARTICLE_FIELDS,
+      startPage: [startPage]
     };
 
     try {
-      const articles = await this.firestoreHttpService.runQueryByConfig(articlesQueryConfig);
+      const articles = await this.firestoreHttpService.runQueryByConfig(fireQuery);
 
       return await this.buildPageOfArticles(articles, pageSize);
     } catch (error: any) {
@@ -184,18 +251,32 @@ export class FireArticlesHttpService {
     startPage: string | null = null,
     isForwardDir: boolean = true
   ): Promise<PageArticles> {
-    const articlesQueryConfig: QueryConfig = {
-      isLive: null, // null | false | true equals in review | offline | live
-      orderField: 'updated',
-      orderFieldType: StructuredQueryValueType.stringValue,
-      startPage,
+
+    const fireQuery: FireQuery = {
+      collectionId: ARTICLES_COLLECTION_ID,
+      where: [
+        {
+          fieldPath: 'isLive',
+          operator: StructuredQueryOperatorEnum.EQUAL,
+          value: null,
+          valueType: StructuredQueryValueType.booleanValue
+        } as FireQueryFilter,
+      ],
+      orderBy: [
+        {
+          fieldPath: 'updated',
+          fieldType: StructuredQueryValueType.stringValue,
+          isDesc: true
+        } as FireOrderField
+      ],
+      selectFields: SHALLOW_ARTICLE_FIELDS,
       pageSize,
       isForwardDir,
-      isDesc: true,
-      selectFields: SHALLOW_ARTICLE_FIELDS,
+      startPage: [startPage]
     };
+
     try {
-      const articles = await this.firestoreHttpService.runQueryByConfig(articlesQueryConfig);
+      const articles = await this.firestoreHttpService.runQueryByConfig(fireQuery);
 
       return await this.buildPageOfArticles(articles, pageSize);
     } catch (error: any) {
@@ -212,25 +293,43 @@ export class FireArticlesHttpService {
     let pageCategoryGroups: Array<PageCategoryGroup> = [];
 
     if (categories && categories.length) {
-      const catArticlesQueryConfig: QueryConfig = {
-        isLive: true,
-        orderField: 'updated',
-        orderFieldType: StructuredQueryValueType.stringValue,
-        articleCategoryId: '',
-        startPage,
+      const fireQuery: FireQuery = {
+        collectionId: ARTICLES_COLLECTION_ID,
+        where: [
+          {
+            fieldPath: 'isLive',
+            operator: StructuredQueryOperatorEnum.EQUAL,
+            value: true,
+            valueType: StructuredQueryValueType.booleanValue
+          } as FireQueryFilter,
+          {
+            fieldPath: 'categories',
+            operator: StructuredQueryOperatorEnum.ARRAY_CONTAINS,
+            value: '',
+            valueType: StructuredQueryValueType.stringValue
+          } as FireQueryFilter,
+        ],
+        orderBy: [
+          {
+            fieldPath: 'updated',
+            fieldType: StructuredQueryValueType.stringValue,
+            isDesc: true
+          } as FireOrderField
+        ],
+        selectFields: SHALLOW_ARTICLE_FIELDS,
         pageSize,
         isForwardDir,
-        isDesc: true,
-        selectFields: SHALLOW_ARTICLE_FIELDS,
+        startPage: [startPage]
       };
+
       try {
         pageCategoryGroups = await Promise.all(
           categories.map(async (cat) => {
+            const catId = typeof cat === 'string' ? cat : cat.id;
+            fireQuery.where.find(wh => wh.fieldPath === 'categories').value = catId;
+
             try {
-              const catArticles = await this.firestoreHttpService.runQueryByConfig({
-                ...catArticlesQueryConfig,
-                articleCategoryId: typeof cat === 'string' ? cat : cat.id,
-              });
+              const catArticles = await this.firestoreHttpService.runQueryByConfig(fireQuery);
               // if a single category, then add pagearticles with previous and next page info else leave that info empty., so that pagination can be enebled for Category articles.
               let pageArticles = await this.buildPageOfArticles(
                 catArticles,
@@ -260,15 +359,35 @@ export class FireArticlesHttpService {
   public async getAllLiveArticlesFromDate(
     fromDateTime: string
   ): Promise<Array<Article>> {
-    const articlesQueryConfig: QueryConfig = {
-      isLive: true,
-      orderField: 'updated',
-      updated: fromDateTime,
-      orderFieldType: StructuredQueryValueType.stringValue,
+
+    const fireQuery: FireQuery = {
+      collectionId: ARTICLES_COLLECTION_ID,
+      where: [
+        {
+          fieldPath: 'updated',
+          operator: StructuredQueryOperatorEnum.GREATER_THAN_OR_EQUAL,
+          value: fromDateTime,
+          valueType: StructuredQueryValueType.stringValue
+        } as FireQueryFilter,
+        {
+          fieldPath: 'isLive',
+          operator: StructuredQueryOperatorEnum.EQUAL,
+          value: true,
+          valueType: StructuredQueryValueType.booleanValue
+        } as FireQueryFilter,
+      ],
+      orderBy: [
+        {
+          fieldPath: 'updated',
+          fieldType: StructuredQueryValueType.stringValue,
+          isDesc: true
+        } as FireOrderField
+      ],
       selectFields: ['categories', 'updated'],
     };
+
     try {
-      const articles = await this.firestoreHttpService.runQueryByConfig(articlesQueryConfig);
+      const articles = await this.firestoreHttpService.runQueryByConfig(fireQuery);
       return articles;
     } catch (error: any) {
       throw error;
@@ -276,25 +395,44 @@ export class FireArticlesHttpService {
   }
 
   public async getLiveOnePageShallowArticlesByFeatures(
-    features: Array<ArticleFeatures>,
+    features: Array<string>,
     isLive: boolean = true,
     pageSize: number = 0,
     startPage: string | null = null,
     isForwardDir: boolean = true
   ): Promise<PageArticles> {
-    const articlesQueryConfig: QueryConfig = {
-      isLive,
-      orderField: 'updated',
-      orderFieldType: StructuredQueryValueType.stringValue,
-      startPage,
+
+    const fireQuery: FireQuery = {
+      collectionId: ARTICLES_COLLECTION_ID,
+      where: [
+        {
+          fieldPath: 'features',
+          operator: StructuredQueryOperatorEnum.ARRAY_CONTAINS_ANY,
+          value: features,
+          valueType: StructuredQueryValueType.stringValue
+        } as FireQueryFilter,
+        {
+          fieldPath: 'isLive',
+          operator: StructuredQueryOperatorEnum.EQUAL,
+          value: true,
+          valueType: StructuredQueryValueType.booleanValue
+        } as FireQueryFilter,
+      ],
+      orderBy: [
+        {
+          fieldPath: 'updated',
+          fieldType: StructuredQueryValueType.stringValue,
+          isDesc: true
+        } as FireOrderField
+      ],
+      selectFields: SHALLOW_ARTICLE_FIELDS,
       pageSize,
       isForwardDir,
-      isDesc: true,
-      features,
-      selectFields: SHALLOW_ARTICLE_FIELDS,
+      startPage: [startPage]
     };
+
     try {
-      const articles = await this.firestoreHttpService.runQueryByConfig(articlesQueryConfig);
+      const articles = await this.firestoreHttpService.runQueryByConfig(fireQuery);
 
       return await this.buildPageOfArticles(articles, pageSize);
     } catch (error: any) {
@@ -325,7 +463,7 @@ export class FireArticlesHttpService {
     const pArticle = { ...article, updated: currentDate, isLive: false, inReview: false } as Article;
     pArticle.metaInfo['article:published_time'] = currentDate;
     if (!pArticle.created) pArticle.created = currentDate;
-    if (!pArticle.userId) pArticle.userId = this.fireAuthSvc.getCurrentUserId();
+    if (!pArticle.userId) throw new Error('Article userId is required.');
 
     return this.firestoreHttpService.runQueryToUpdate(ARTICLES_COLLECTION_ID, article, fieldsToUpdate, false)
       .catch((error) => {
@@ -338,6 +476,9 @@ export class FireArticlesHttpService {
 
     // Any modification to a article, will bring it to unpublished, and not up for review.
     article.isLive = article.inReview === true ? false : article.isLive;
+    const currentDate = this.utilsSvc.currentDate;
+    article.updated = currentDate;
+    article.metaInfo['article:published_time'] = currentDate;
 
     return this.firestoreHttpService.runQueryToUpdate(ARTICLES_COLLECTION_ID, article, fieldsToUpdate, false)
       .catch((error) => {
@@ -350,6 +491,9 @@ export class FireArticlesHttpService {
 
     // Any modification to a article, will bring it to unpublished, and not up for review.
     article.inReview = article.isLive === true ? false : article.inReview;
+    const currentDate = this.utilsSvc.currentDate;
+    article.updated = currentDate;
+    article.metaInfo['article:published_time'] = currentDate;
 
     return this.firestoreHttpService.runQueryToUpdate(ARTICLES_COLLECTION_ID, article, fieldsToUpdate, false)
       .catch((error) => {

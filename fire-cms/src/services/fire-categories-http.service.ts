@@ -1,11 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LibConfig } from '@annuadvent/ngx-core/app-config';
 import { UtilsService } from '@annuadvent/ngx-core/utils';
-import { AuthFirebaseService } from '@annuadvent/ngx-tools/fire-auth';
-import {
-  Category,
-  CategoryFeatures,
-} from '@annuadvent/ngx-cms/category';
+import { Category } from '../interfaces/fire-categories.interface';
 
 import {
   FireOrderField,
@@ -36,7 +32,6 @@ export class FireCategoriesHttpService {
     private utilsSvc: UtilsService,
     private firestoreHttpService: FirestoreHttpService,
     private fireArticlesHttpService: FireArticlesHttpService,
-    private fireAuthSvc: AuthFirebaseService
   ) {
     this.firestoreApiUrl = this.libConfig.firestoreBaseApiUrl;
   }
@@ -330,7 +325,7 @@ export class FireCategoriesHttpService {
   }
 
   public async getShallowLiveCategoriesByFeatures(
-    features: CategoryFeatures | Array<CategoryFeatures>,
+    features: string | Array<string>,
     isLive: boolean = true
   ): Promise<Array<Category>> {
 
@@ -443,8 +438,7 @@ export class FireCategoriesHttpService {
     const pCategory = { ...category, updated: currentDate, isLive: false, inReview: false };
     pCategory.metaInfo['article:published_time'] = currentDate;
     if (!pCategory.created) pCategory.created = currentDate;
-    if (!pCategory.userId)
-      pCategory.userId = this.fireAuthSvc.getCurrentUserId();
+    if (!pCategory.userId) throw new Error('Category userId is required.');
 
     return this.firestoreHttpService.runQueryToUpdate(CATEGORIES_COLLECTION_ID, pCategory, fieldsToUpdate, false)
       .catch((error) => {
