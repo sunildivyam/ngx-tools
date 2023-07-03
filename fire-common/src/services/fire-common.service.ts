@@ -2,9 +2,11 @@ import { Injectable } from '@angular/core';
 import { FirebaseApp, getApps, initializeApp } from 'firebase/app';
 import { FirebaseConfig } from '../interfaces/fire-common.interface';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class FireCommonService {
-  _firebaseConfig: FirebaseConfig;
+  private _firebaseConfig: FirebaseConfig;
 
   constructor() { }
 

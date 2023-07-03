@@ -4,6 +4,8 @@ export * from './src/fire-auth.module';
 export * from './src/constants/fire-auth.constants';
 export * from './src/services/fire-auth-ui.service';
 export * from './src/services/fire-auth.service';
+export * from './src/components/login/login.component';
+export * from './src/components/login-status/login-status.component';
 // Auth Guards
 
 export * from './src/guards/is-logged-in.guard';

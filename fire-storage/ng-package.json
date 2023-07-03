@@ -5,7 +5,8 @@
 		"entryFile": "./public-api.ts",
 		"cssUrl": "inline",
 		"styleIncludePaths": [
-			"../scss"
+			"../../../dist/ngx-tools/ngx-common-ui/scss",
+			"../../../node_modules/ngx-tools/ngx-common-ui/scss"
 		]
 	}
 }

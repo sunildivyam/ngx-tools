@@ -1,0 +1,16 @@
+<div class="row-lg col-md-12 col-sm-12 center middle" [ngClass]="theme">
+    <ng-container *ngIf="user">
+        <a [routerLink]="profilePageUrl" (click)="loggedInProfileClicked($event)">
+            <div class="image-container">
+                <img *ngIf="user?.photoURL" [src]="user?.photoURL" [alt]="user?.displayName" />
+                <img *ngIf="!user?.photoURL" [src]="userIcon" [alt]="user?.displayName" />
+            </div>
+            <div *ngIf="user?.displayName" class="spacing hidden-lg"><strong>{{user?.displayName}}</strong></div>
+        </a>
+        <div class="spacing"><a href="#" (click)="logoutClicked($event)"><strong>Sign Out</strong></a></div>
+    </ng-container>
+    <div *ngIf="!user">
+        <a [routerLink]="loginPageUrl" (click)="loginClicked($event)"><strong>Sign In</strong></a>
+    </div>
+    <anu-spinner size="sm" [show]="loading"></anu-spinner>
+</div>
