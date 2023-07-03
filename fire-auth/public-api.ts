@@ -4,3 +4,14 @@ export * from './src/fire-auth.module';
 export * from './src/constants/fire-auth.constants';
 export * from './src/services/fire-auth-ui.service';
 export * from './src/services/fire-auth.service';
+// Auth Guards
+
+export * from './src/guards/is-logged-in.guard';
+export * from './src/guards/role-admin.guard';
+export * from './src/guards/role-author.guard';
+export * from './src/guards/role-editor.guard';
+export * from './src/guards/role-manager.guard';
+export * from './src/guards/role-paid-member.guard';
+export * from './src/guards/role-reader.guard';
+export * from './src/guards/role-student.guard';
+export * from './src/guards/role-teacher.guard';
