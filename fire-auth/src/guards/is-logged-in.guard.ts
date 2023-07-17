@@ -4,7 +4,9 @@ import { FireAuthService } from '../services/fire-auth.service';
 import { FIREBASE_AUTH_ROLES } from '../constants/fire-auth.constants';
 
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class IsLoggedInGuard {
 
   constructor(private fireAuthService: FireAuthService,

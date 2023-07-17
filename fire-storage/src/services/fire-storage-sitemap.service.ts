@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { FireCommonService } from '@annuadvent/ngx-tools/fire-common';
-import { sitemapFileName } from '../constants/fire-storagee-sitemap.constants';
+import { sitemapFileName } from '../constants/fire-storage-sitemap.constants';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class FireStorageSitemapService {
   public sitemapFileName: string = sitemapFileName;
 

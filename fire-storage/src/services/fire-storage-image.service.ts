@@ -17,7 +17,9 @@ import {
   ImageFileInfoList,
 } from '../interfaces/fire-storage-image.interface';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class FireStorageImageService {
   public baseStoreUrl: string = '';
 

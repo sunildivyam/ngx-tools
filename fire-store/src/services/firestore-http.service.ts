@@ -6,7 +6,9 @@ import { FireQuery } from '../interfaces/fire-query.interface';
 import { FirestoreQueryService } from './firestore-query.service';
 import { BIN_COLLECTION_POSTFIX, RUN_QUERY_KEYWORD } from '../constants/firestore.constants';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class FirestoreHttpService {
   firestoreApiUrl: string = '';
 

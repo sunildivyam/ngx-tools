@@ -5,7 +5,9 @@ import { FIREBASE_AUTH_ROLES } from '../constants/fire-auth.constants';
 
 
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class RoleEditorGuard {
 
   constructor(private fireAuthService: FireAuthService, private router: Router) { }

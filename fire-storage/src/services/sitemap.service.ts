@@ -12,10 +12,12 @@ import { xml2json, json2xml } from 'xml-js';
 import { UtilsService } from '@annuadvent/ngx-core/utils';
 import { AppConfigService } from '@annuadvent/ngx-core/app-config';
 import { FireStorageSitemapService } from './fire-storage-sitemap.service';
-import { defaultSitemapXmlStr } from '../constants/fire-storagee-sitemap.constants';
+import { defaultSitemapXmlStr } from '../constants/fire-storage-sitemap.constants';
 
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class SitemapService {
 
   constructor(

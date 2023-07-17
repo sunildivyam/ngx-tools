@@ -11,7 +11,9 @@ import {
 } from '../enums/structured-query.enums';
 
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class FirestoreParserService {
 
   constructor() { }

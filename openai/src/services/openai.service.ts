@@ -12,7 +12,9 @@ import {
 } from 'openai';
 import { OpenaiConfig, OpenaiImageSize } from '../interfaces/openai.interface';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class OpenaiService {
   openAi: OpenAIApi | undefined;
   openaiConfig: OpenaiConfig | undefined;

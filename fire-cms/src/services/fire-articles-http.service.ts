@@ -12,7 +12,9 @@ import { UtilsService } from '@annuadvent/ngx-core/utils';
 import { FireOrderField, FireQuery, FireQueryFilter, FirestoreHttpService, StructuredQueryOperatorEnum, StructuredQueryValueType } from '@annuadvent/ngx-tools/fire-store';
 import { FireCommonService } from '@annuadvent/ngx-tools/fire-common';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class FireArticlesHttpService {
   firestoreApiUrl: string = '';
 

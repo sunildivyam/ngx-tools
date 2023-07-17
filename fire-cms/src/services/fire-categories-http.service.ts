@@ -23,7 +23,9 @@ import {
 import { FireArticlesHttpService } from './fire-articles-http.service';
 import { FireCommonService } from '@annuadvent/ngx-tools/fire-common';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class FireCategoriesHttpService {
   firestoreApiUrl: string = '';
 

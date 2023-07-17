@@ -23,7 +23,9 @@ import {
 import { FireCommonService } from '@annuadvent/ngx-tools/fire-common';
 
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class FirestoreQueryService {
   private firestoreApiUrl: string = '';
 

@@ -4,7 +4,9 @@ import { FireAuthService } from '../services/fire-auth.service';
 import { FIREBASE_AUTH_ROLES } from '../constants/fire-auth.constants';
 
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class RoleAdminGuard {
 
   constructor(private fireAuthService: FireAuthService, private router: Router) { }
