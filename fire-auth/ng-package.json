@@ -6,7 +6,7 @@
 		"cssUrl": "inline",
 		"styleIncludePaths": [
 			"../../../dist/ngx-common-ui/scss",
-			"../../../node_modules/ngx-common-ui/scss"
+			"../../../node_modules/@annuadvent/ngx-common-ui/scss"
 		]
 	}
 }

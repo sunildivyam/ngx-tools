@@ -17,3 +17,7 @@ export * from './src/guards/role-paid-member.guard';
 export * from './src/guards/role-reader.guard';
 export * from './src/guards/role-student.guard';
 export * from './src/guards/role-teacher.guard';
+
+// Interceptors
+export * from './src/interceptors/api.interceptor';
+export * from './src/interceptors/firebase.interceptor';
