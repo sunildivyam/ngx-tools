@@ -66,6 +66,10 @@ export class FirestoreQueryService {
     const filters = where.map(fireFilter => {
       let { fieldPath, operator, value, valueType } = fireFilter;
 
+      if (value === null || typeof value === 'undefined') {
+        return null;
+      }
+
       /*
       * If Where has a filter for id, that means it has to be filtered on document's __name__ reference fieldpath.
       * Also __name__ has to be in orderBy. So add it to orderBy separately.
@@ -93,12 +97,18 @@ export class FirestoreQueryService {
       }
     });
 
-    return {
-      compositeFilter: {
-        filters,
-        op: StructuredQueryOperatorEnum.AND
-      }
-    } as StructuredQueryFilter;
+    const validFilters = filters.filter(ft => ft !== null);
+
+    if (validFilters && validFilters.length) {
+      return {
+        compositeFilter: {
+          filters,
+          op: StructuredQueryOperatorEnum.AND
+        }
+      } as StructuredQueryFilter;
+    } else {
+      return null;
+    }
   }
 
   public fireToStructuredQuery(fireQuery: FireQuery): StructuredQuery {
@@ -135,7 +145,7 @@ export class FirestoreQueryService {
       squery.orderBy = this.getOrderBy(orderBy);
     }
 
-    if (startPage && orderBy && orderBy.length) {
+    if (startPage && orderBy && orderBy.length && pageSize > 0) {
       if (isForwardDir === false) {
         squery.endAt = this.getStartPage(startPage, orderBy);
       } else {
@@ -148,7 +158,10 @@ export class FirestoreQueryService {
     }
 
     if (where && where.length) {
-      squery.where = this.getWhere(where, collectionId);
+      const validWhere = this.getWhere(where, collectionId);
+      if (validWhere) {
+        squery.where = validWhere;
+      }
     }
 
     return { structuredQuery: squery } as StructuredQuery;
