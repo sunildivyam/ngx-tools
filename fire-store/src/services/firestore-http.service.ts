@@ -10,23 +10,22 @@ import { BIN_COLLECTION_POSTFIX, RUN_QUERY_KEYWORD } from '../constants/firestor
   providedIn: 'root'
 })
 export class FirestoreHttpService {
-  firestoreApiUrl: string = '';
 
   constructor(
     private fireCommonService: FireCommonService,
     private http: HttpClient,
     private firestoreParser: FirestoreParserService,
     private firestoreQueryService: FirestoreQueryService,
-  ) {
-    this.firestoreApiUrl = this.fireCommonService.firebaseConfig.store.firestoreBaseApiUrl;
-  }
+  ) { }
 
   public async runQueryById(collectionId: string, id: string): Promise<any> {
+    const firestoreApiUrl = this.fireCommonService.firebaseConfig?.store?.firestoreBaseApiUrl;
+
     return new Promise((resolve, reject) => {
       if (!collectionId || !id) {
         reject('Please provide a valid collection id and document id.');
       } else {
-        const url = `${this.firestoreApiUrl}/${collectionId}/${id}`;
+        const url = `${firestoreApiUrl}/${collectionId}/${id}`;
         const httpSubscription = this.http.get(url).subscribe({
           next: (queryResult: any) => {
             const parsedQueryResult: any = this.firestoreParser.parse(queryResult);
@@ -42,8 +41,10 @@ export class FirestoreHttpService {
   public async runQueryByConfig(
     fireQuery: FireQuery
   ): Promise<Array<any>> {
+    const firestoreApiUrl = this.fireCommonService.firebaseConfig?.store?.firestoreBaseApiUrl;
+
     return new Promise((resolve, reject) => {
-      const url = `${this.firestoreApiUrl}${RUN_QUERY_KEYWORD}`;
+      const url = `${firestoreApiUrl}${RUN_QUERY_KEYWORD}`;
 
       const httpSubscription = this.http
         .post(
@@ -69,6 +70,8 @@ export class FirestoreHttpService {
     fieldsToUpdate: Array<string>,
     isBin: boolean = false
   ): Promise<any> {
+    const firestoreApiUrl = this.fireCommonService.firebaseConfig?.store?.firestoreBaseApiUrl;
+
     if (!collectionDoc || !collectionDoc.id) throw new Error('Please provide a valid collection document');
 
     // If update to Bin collection, then postfix collectionId with '-bin'
@@ -78,7 +81,7 @@ export class FirestoreHttpService {
     delete pCollectionDoc.id;
 
     return new Promise((resolve, reject) => {
-      const url = `${this.firestoreApiUrl}/${collectionId}/${collectionDoc.id}`;
+      const url = `${firestoreApiUrl}/${collectionId}/${collectionDoc.id}`;
       const body = this.firestoreParser.buildFirebaseFields(
         pCollectionDoc,
         fieldsToUpdate
@@ -102,6 +105,8 @@ export class FirestoreHttpService {
   }
 
   public async runQueryToDelete(collectionId: string, collectionDoc: any): Promise<boolean> {
+    const firestoreApiUrl = this.fireCommonService.firebaseConfig?.store?.firestoreBaseApiUrl;
+
     if (!collectionDoc || !collectionDoc.id)
       throw new Error('Please provide a valid collectionDoc.');
 
@@ -109,7 +114,7 @@ export class FirestoreHttpService {
       // Copy to collectionDocs bin, then delete from collectionDocs db.
       this.runQueryToUpdate(collectionId, collectionDoc, null, true)
         .then(() => {
-          const url = `${this.firestoreApiUrl}/${collectionId}/${collectionDoc.id}`;
+          const url = `${firestoreApiUrl}/${collectionId}/${collectionDoc.id}`;
           // delete from collectionDocs db.
           const httpSubscription = this.http.delete(url).subscribe({
             next: (res: any) => {

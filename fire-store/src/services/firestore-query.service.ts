@@ -27,11 +27,8 @@ import { FireCommonService } from '@annuadvent/ngx-tools/fire-common';
   providedIn: 'root'
 })
 export class FirestoreQueryService {
-  private firestoreApiUrl: string = '';
 
-  constructor(private fireCommonService: FireCommonService) {
-    this.firestoreApiUrl = this.fireCommonService.firebaseConfig.store.firestoreBaseApiUrl;
-  }
+  constructor(private fireCommonService: FireCommonService) { }
 
   private getSelectFields(selectFields: Array<string>): StructuredQuerySelectProjection {
     return {
@@ -55,7 +52,7 @@ export class FirestoreQueryService {
   }
 
   private getStartPage(startPage: Array<any>, orderBy: Array<FireOrderField>): StructuredQueryCursor {
-    const values = orderBy.map((orderField, index) => ({ [orderField.fieldType]: startPage[index] }))
+    const values = orderBy.map((orderField, index) => ({ [orderField.fieldType]: startPage[index] || 'null' }))
     return {
       values,
       before: false
@@ -63,6 +60,8 @@ export class FirestoreQueryService {
   }
 
   private getWhere(where: Array<FireQueryFilter>, collectionId: string): StructuredQueryFilter {
+    const firestoreApiUrl = this.fireCommonService.firebaseConfig?.store?.firestoreBaseApiUrl;
+
     const filters = where.map(fireFilter => {
       let { fieldPath, operator, value, valueType } = fireFilter;
 
@@ -75,8 +74,8 @@ export class FirestoreQueryService {
       * Also __name__ has to be in orderBy. So add it to orderBy separately.
      */
       if (fieldPath === 'id') {
-        const collectionUrl = this.firestoreApiUrl.substring(
-          this.firestoreApiUrl.indexOf('/projects/') + 1
+        const collectionUrl = firestoreApiUrl.substring(
+          firestoreApiUrl.indexOf('/projects/') + 1
         );
 
         fieldPath = '__name__';
@@ -145,7 +144,7 @@ export class FirestoreQueryService {
       squery.orderBy = this.getOrderBy(orderBy);
     }
 
-    if (startPage && orderBy && orderBy.length && pageSize > 0) {
+    if (startPage && startPage.length && orderBy && orderBy.length && pageSize > 0) {
       if (isForwardDir === false) {
         squery.endAt = this.getStartPage(startPage, orderBy);
       } else {

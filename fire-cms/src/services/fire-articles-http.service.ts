@@ -10,21 +10,17 @@ import {
 } from '../constants/fire-articles-http.contants';
 import { UtilsService } from '@annuadvent/ngx-core/utils';
 import { FireOrderField, FireQuery, FireQueryFilter, FirestoreHttpService, StructuredQueryOperatorEnum, StructuredQueryValueType } from '@annuadvent/ngx-tools/fire-store';
-import { FireCommonService } from '@annuadvent/ngx-tools/fire-common';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class FireArticlesHttpService {
-  firestoreApiUrl: string = '';
 
   constructor(
-    private fireCommonService: FireCommonService,
     private utilsSvc: UtilsService,
     private firestoreHttpService: FirestoreHttpService,
-  ) {
-    this.firestoreApiUrl = this.fireCommonService.firebaseConfig.store.firestoreBaseApiUrl;
-  }
+  ) { }
 
   private async buildPageOfArticles(
     articles: Array<Article>,
@@ -152,7 +148,7 @@ export class FireArticlesHttpService {
       selectFields: SHALLOW_ARTICLE_FIELDS,
       pageSize,
       isForwardDir,
-      startPage: [startPage]
+      startPage: startPage ? [startPage] : null
     };
 
     try {
@@ -191,7 +187,7 @@ export class FireArticlesHttpService {
       selectFields: SHALLOW_ARTICLE_FIELDS,
       pageSize,
       isForwardDir,
-      startPage: [startPage]
+      startPage: startPage ? [startPage] : null
     };
 
     try {
@@ -236,7 +232,7 @@ export class FireArticlesHttpService {
       selectFields: SHALLOW_ARTICLE_FIELDS,
       pageSize,
       isForwardDir,
-      startPage: [startPage]
+      startPage: startPage ? [startPage] : null
     };
 
     try {
@@ -274,7 +270,7 @@ export class FireArticlesHttpService {
       selectFields: SHALLOW_ARTICLE_FIELDS,
       pageSize,
       isForwardDir,
-      startPage: [startPage]
+      startPage: startPage ? [startPage] : null
     };
 
     try {
@@ -321,7 +317,7 @@ export class FireArticlesHttpService {
         selectFields: SHALLOW_ARTICLE_FIELDS,
         pageSize,
         isForwardDir,
-        startPage: [startPage]
+        startPage: startPage ? [startPage] : null
       };
 
       try {
@@ -416,7 +412,7 @@ export class FireArticlesHttpService {
         {
           fieldPath: 'isLive',
           operator: StructuredQueryOperatorEnum.EQUAL,
-          value: true,
+          value: isLive,
           valueType: StructuredQueryValueType.booleanValue
         } as FireQueryFilter,
       ],
@@ -430,7 +426,7 @@ export class FireArticlesHttpService {
       selectFields: SHALLOW_ARTICLE_FIELDS,
       pageSize,
       isForwardDir,
-      startPage: [startPage]
+      startPage: startPage ? [startPage] : null
     };
 
     try {
@@ -466,6 +462,10 @@ export class FireArticlesHttpService {
     pArticle.metaInfo['article:published_time'] = currentDate;
     if (!pArticle.created) pArticle.created = currentDate;
     if (!pArticle.userId) throw new Error('Article userId is required.');
+
+    // Any modification to a article, will bring it to unpublished, and not up for review.
+    pArticle.isLive = false;
+    pArticle.inReview = false;
 
     return this.firestoreHttpService.runQueryToUpdate(ARTICLES_COLLECTION_ID, article, fieldsToUpdate, false)
       .catch((error) => {

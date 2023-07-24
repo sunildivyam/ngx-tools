@@ -21,22 +21,16 @@ import {
   PageCategoryGroup,
 } from '../interfaces/fire-categories.interface';
 import { FireArticlesHttpService } from './fire-articles-http.service';
-import { FireCommonService } from '@annuadvent/ngx-tools/fire-common';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FireCategoriesHttpService {
-  firestoreApiUrl: string = '';
-
   constructor(
-    private fireCommonService: FireCommonService,
     private utilsSvc: UtilsService,
     private firestoreHttpService: FirestoreHttpService,
     private fireArticlesHttpService: FireArticlesHttpService,
-  ) {
-    this.firestoreApiUrl = this.fireCommonService.firebaseConfig.store.firestoreBaseApiUrl;
-  }
+  ) { }
 
   private async buildPageOfCategories(
     categories: Array<Category>,
@@ -247,6 +241,8 @@ export class FireCategoriesHttpService {
         } as FireOrderField
       ],
       selectFields: SHALLOW_CATEGORY_FIELDS,
+      startPage: startPage ? [startPage] : null,
+      isForwardDir,
     };
 
     try {
@@ -435,12 +431,16 @@ export class FireCategoriesHttpService {
   public async updateCategory(category: Category): Promise<Category> {
     const fieldsToUpdate = [...UPDATE_CATEGORY_FIELDS, 'isLive'];
 
-    // Any modification to a category, will bring it to unpublished, and not up for review.
     const currentDate = this.utilsSvc.currentDate;
     const pCategory = { ...category, updated: currentDate, isLive: false, inReview: false };
     pCategory.metaInfo['article:published_time'] = currentDate;
     if (!pCategory.created) pCategory.created = currentDate;
     if (!pCategory.userId) throw new Error('Category userId is required.');
+
+    // Any modification to a category, will bring it to unpublished, and not up for review.
+    pCategory.isLive = false;
+    pCategory.inReview = false;
+
 
     return this.firestoreHttpService.runQueryToUpdate(CATEGORIES_COLLECTION_ID, pCategory, fieldsToUpdate, false)
       .catch((error) => {
