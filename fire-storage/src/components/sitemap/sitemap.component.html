@@ -1,0 +1,99 @@
+<div class="flex-container center">
+    <div class="container">
+        <div class="row">
+            <!-- Current Sitemap Urls -->
+            <anu-card class="col-12 shadow spacing">
+                <anu-card-title>
+                    <a href="#" class="" (click)="loadSitemap($event)">Load sitemap.xml</a>
+                </anu-card-title>
+                <anu-card-body>
+                    <anu-collapsible class="spacing-vertical" *ngIf="sitemapInfo || sitemap"
+                        [collapsed]="currentSitemapCollapsed" [hamBurgerClassNames]="['size-md']"
+                        [isDropdownStyle]="true" (changed)="currentSitemapCollapsed = !currentSitemapCollapsed">
+                        <anu-collapsible-header>Current Sitemap</anu-collapsible-header>
+                        <anu-collapsible-content>
+                            <h3 *ngIf="sitemapInfo">Sitemap was last updated on:
+                                <strong>{{sitemapInfo.updated}}</strong>
+                            </h3>
+                            <ol *ngIf="sitemap?.urlset?.url">
+                                <li *ngFor="let url of sitemap.urlset.url">
+                                    {{url.lastmod._text}} | {{url.priority._text}} | {{url.loc._text}}
+                                </li>
+                            </ol>
+                            <div class="row right spacing-vertical">
+                                <a href="#" title="View in xml" (click)="showXmlString($event, sitemap)">XML</a>
+                            </div>
+                        </anu-collapsible-content>
+                    </anu-collapsible>
+                </anu-card-body>
+            </anu-card>
+
+            <!-- New Urls to be added -->
+            <anu-card *ngIf="sitemap" class="col-12 shadow spacing">
+                <anu-card-title>
+                    <a href="#" class="" (click)="checkNewUrls($event)">Check for new Urls</a>
+                </anu-card-title>
+                <anu-card-body>
+                    <anu-collapsible *ngIf="newUrls" class="spacing-vertical" [collapsed]="checkNewUrlsCollapsed"
+                        [hamBurgerClassNames]="['size-md']" [isDropdownStyle]="true"
+                        (changed)="checkNewUrlsCollapsed = !checkNewUrlsCollapsed">
+                        <anu-collapsible-header class="bg-secondary">Sitemap new Urls</anu-collapsible-header>
+                        <anu-collapsible-content>
+                            <ol *ngIf="newUrls?.length">
+                                <li *ngFor="let url of newUrls">
+                                    {{url.lastmod._text}} | {{url.priority._text}} | {{url.loc._text}}
+                                </li>
+                            </ol>
+                            <p *ngIf="!newUrls?.length" class="warning">No new urls available</p>
+                        </anu-collapsible-content>
+                    </anu-collapsible>
+                </anu-card-body>
+            </anu-card>
+
+
+            <!-- Preview Merged Urls -->
+            <anu-card *ngIf="newUrls?.length" class="col-12 shadow spacing">
+                <anu-card-title>
+                    <a href="#" class="" (click)="previewSitemap($event)">Preview sitemap.xml (Ready to update)</a>
+                </anu-card-title>
+                <anu-card-body>
+                    <anu-collapsible *ngIf="newSitemap" class="spacing-vertical" [collapsed]="previewCollapsed"
+                        [hamBurgerClassNames]="['size-md']" [isDropdownStyle]="true"
+                        (changed)="previewCollapsed = !previewCollapsed">
+                        <anu-collapsible-header class="bg-secondary">New Sitemap (Ready to
+                            update)</anu-collapsible-header>
+                        <anu-collapsible-content>
+                            <div class="row">
+                                <span class="spacing-half spacing-around"><small><strong>LEGENDS:</strong>
+                                    </small></span>
+                                <span class="spacing-half spacing-around"><small>No change</small></span>
+                                <span class="spacing-half spacing-around success"><small>Added</small></span>
+                                <span class="spacing-half spacing-around warning"><small>Updated</small></span>
+                            </div>
+                            <ol *ngIf="newSitemap?.urlset?.url">
+                                <li *ngFor="let url of newSitemap.urlset.url" [class.success]="url.status === true"
+                                    [class.warning]="url.status === false">
+                                    {{url.lastmod._text}} | {{url.priority._text}} | {{url.loc._text}}
+                                </li>
+                            </ol>
+                            <div class="row right spacing-vertical">
+                                <a href="#" title="View in xml" (click)="showXmlString($event, newSitemap)">XML</a>
+                            </div>
+                        </anu-collapsible-content>
+                    </anu-collapsible>
+                </anu-card-body>
+                <anu-card-footer *ngIf="newSitemap">
+                    <a href="#" class="btn btn-primary" (click)="saveSitemap($event)">Save</a>
+                </anu-card-footer>
+            </anu-card>
+        </div>
+    </div>
+</div>
+
+<anu-modal [cancelLabel]="'Cancel'" [enableCancel]="true" [enableClose]="true" [enableOk]="false" [okLabel]="'Ok'"
+    [opened]="showXmlModal" [title]="'XML view of sitemap'" (cancelClick)="xmlModalClosed()">
+
+    <anu-code-block class="col-12" [enableEdit]='false' [language]="'xml'" [source]="sitemapXmlStr">
+    </anu-code-block>
+
+</anu-modal>

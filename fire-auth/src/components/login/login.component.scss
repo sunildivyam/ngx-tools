@@ -1,0 +1,10 @@
+:host {
+    // firebase UI overrides
+
+    display: flex;
+    flex-direction: column;
+
+    .firebaseui-container {
+        max-width: 100%;
+    }
+}
