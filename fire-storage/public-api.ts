@@ -8,3 +8,7 @@ export * from './src/interfaces/fire-storage-sitemap.interface';
 export * from './src/services/fire-storage-image.service';
 export * from './src/services/fire-storage-sitemap.service';
 export * from './src/services/sitemap.service';
+export * from './src/components/image-browser/image-browser.component';
+export * from './src/services/image-browser.service';
+export * from './src/enums/image-browser.enums';
+export * from './src/interfaces/image-browser.interface';

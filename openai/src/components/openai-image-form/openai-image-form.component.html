@@ -1,3 +1,4 @@
+<anu-error *ngIf="errorMsg" code="UNKNOWN" [message]="errorMsg"></anu-error>
 <form class="container relative disable-select">
     <label>Image Prompt</label>
     <input type="text" [(ngModel)]="imagePromptText" name="imagePromptText" />

@@ -7,6 +7,7 @@ import { SpinnerModule } from '@annuadvent/ngx-common-ui/spinner';
 
 import { OpenaiFormComponent } from './components/openai-form/openai-form.component';
 import { OpenaiImageFormComponent } from './components/openai-image-form/openai-image-form.component';
+import { ErrorModule } from '@annuadvent/ngx-common-ui/error';
 
 
 
@@ -19,6 +20,7 @@ import { OpenaiImageFormComponent } from './components/openai-image-form/openai-
     FormsModule,
     CollapsibleModule,
     SpinnerModule,
+    ErrorModule,
   ],
   exports: [OpenaiFormComponent, OpenaiImageFormComponent],
 })

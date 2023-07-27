@@ -91,7 +91,7 @@
 </div>
 
 <anu-modal [cancelLabel]="'Cancel'" [enableCancel]="true" [enableClose]="true" [enableOk]="false" [okLabel]="'Ok'"
-    [opened]="showXmlModal" [title]="'XML view of sitemap'" (cancelClick)="xmlModalClosed()">
+    [opened]="showXmlModal" [modalTitle]="'XML view of sitemap'" (cancelClick)="xmlModalClosed()">
 
     <anu-code-block class="col-12" [enableEdit]='false' [language]="'xml'" [source]="sitemapXmlStr">
     </anu-code-block>
