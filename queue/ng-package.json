@@ -1,12 +1,11 @@
 {
 	"$schema": "../../../node_modules/ng-packagr/ng-package.schema.json",
-	"dest": "../../../dist/ngx-tools/openai",
+	"dest": "../../../dist/ngx-tools/queue",
 	"lib": {
 		"entryFile": "./public-api.ts",
 		"cssUrl": "inline",
 		"styleIncludePaths": [
-			"../../../dist/ngx-common-ui/scss",
-			"../../../node_modules/@annuadvent/ngx-common-ui/scss"
+			"../scss"
 		]
 	}
 }
