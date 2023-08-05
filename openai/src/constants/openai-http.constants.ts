@@ -93,6 +93,10 @@ export const OPENAI_CONFIGURATION_DEFAULT: OpenaiConfiguration = {
         type: OpenaiConfigurationTypeEnum.string,
         value: '',
     } as OpenaiConfigurationItem,
+    cleanupKeywords: {
+        type: OpenaiConfigurationTypeEnum.string,
+        value: 'AI model, As an AI language model',
+    } as OpenaiConfigurationItem,
     headers: {
         type: OpenaiConfigurationTypeEnum.Object,
         value: {

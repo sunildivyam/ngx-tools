@@ -12,3 +12,4 @@ export * from './src/enums/openai-http.enums';
 export * from './src/constants/openai-http.constants';
 export * from './src/interfaces/openai-http.interface';
 export * from './src/services/openai-config.service';
+export * from './src/services/openai-http.service';

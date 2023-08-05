@@ -12,6 +12,7 @@ export class Queue {
     private startTime: number = 0;
     private batchSize: number = 0;
     private minBatchTime: number = 0;
+    private failedDelay: number = 0;
     private batchStartTime: number = 0;
     private interval: any = null;
 
@@ -175,10 +176,15 @@ export class Queue {
             } else if (this.batchStartTime === 0) {
                 this.notifyBatchAndQueue(nextItems);
             } else {
-                const batchEllapsedTime = Date.now() - this.batchStartTime;
+                const batchHasFailedItem = nextItems.find(item => item.status === QueueStatusEnum.failed);
 
-                if (batchEllapsedTime < this.minBatchTime) {
-                    setTimeout(() => this.notifyBatchAndQueue(nextItems), this.minBatchTime - batchEllapsedTime);
+                const batchEllapsedTime = Date.now() - this.batchStartTime;
+                let delayTime = this.minBatchTime - batchEllapsedTime;
+
+                delayTime = batchHasFailedItem && delayTime < this.failedDelay ? this.failedDelay : delayTime;
+
+                if (delayTime > 0) {
+                    setTimeout(() => this.notifyBatchAndQueue(nextItems), delayTime);
                 } else {
                     this.notifyBatchAndQueue(nextItems);
                 }
@@ -259,6 +265,7 @@ export class Queue {
     public start(
         batchSize: number = 1,
         minBatchTime: number = 0, // seconds
+        failedDelay: number = 0, // seconds
     ): void {
         if (!this.canStart()) return;
 
@@ -266,6 +273,7 @@ export class Queue {
         this.startTime = Date.now();
         this.batchSize = batchSize;
         this.minBatchTime = minBatchTime * 1000; // convert to milliseconds
+        this.failedDelay = failedDelay * 1000; // convert to milliseconds
         this.notifyStatusChange(QueueStatusEnum.inprogress);
     }
 

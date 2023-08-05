@@ -27,6 +27,6 @@ import { CodeBlockModule } from '@annuadvent/ngx-common-ui/code-block';
     ModalModule,
     CodeBlockModule,
   ],
-  exports: [OpenaiFormComponent, OpenaiImageFormComponent],
+  exports: [OpenaiFormComponent, OpenaiImageFormComponent, OpenaiConfigurationComponent],
 })
 export class OpenaiModule { }

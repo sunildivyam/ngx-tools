@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { OpenaiConfiguration } from '../interfaces/openai-http.interface';
 import { OPENAI_CONFIGURATION_DEFAULT } from '../constants/openai-http.constants';
+import { OpenaiConfig } from '../interfaces/openai.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -22,23 +23,38 @@ export class OpenaiConfigService {
   }
 
   public initOpenai(apiKey: string, organization: string) {
-    this.config$.next({
-      ...this.config$.value,
+    this.config$.next(this.mergeKeyConfigWithBaseConfig(this.config$.value, { apiKey, organization }));
+  }
+
+  public mergeKeyConfigWithBaseConfig(baseConfig: OpenaiConfiguration, keyConfig: OpenaiConfig): OpenaiConfiguration {
+    const { apiKey, organization } = keyConfig;
+
+    return {
+      ...baseConfig,
       apiKey: {
-        ...this.config$.value.apiKey,
+        ...baseConfig.apiKey,
         value: apiKey
       },
       headers: {
-        ...this.config$.value.headers,
+        ...baseConfig.headers,
         value: {
-          ...this.config$.value.headers.value,
+          ...baseConfig.headers.value,
           'OpenAI-Organization': {
-            ...this.config$.value.headers.value['OpenAI-Organization'],
+            ...baseConfig.headers.value['OpenAI-Organization'],
             value: organization,
           },
         }
       }
-    });
+    }
+  }
+
+  public getKeyConfig(config: OpenaiConfiguration): OpenaiConfig {
+    const openaiConfig: OpenaiConfig = {
+      apiKey: config?.apiKey?.value,
+      organization: config?.headers?.value['OpenAI-Organization'].value,
+    };
+
+    return openaiConfig;
   }
 
   public updateConfig(config: OpenaiConfiguration) {

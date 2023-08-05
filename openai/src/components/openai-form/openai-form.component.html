@@ -1,7 +1,7 @@
 <form class="container disable-select">
 
     <div class="input-container row nowrap">
-        <select class="prompt-types" name="prompt-types" [(ngModel)]="selectedPromptType">
+        <select *ngIf="showPrompts" class="prompt-types" name="prompt-types" [(ngModel)]="selectedPromptType">
             <option [value]="optType.value" *ngFor="let optType of promptTypes">{{optType.key}}</option>
         </select>
         <input name="openaiPrompt" type="text" placeholder="Write your prompt here" [(ngModel)]="currentPrompt" />
@@ -9,7 +9,8 @@
     </div>
 
     <div class="row" *ngIf="showHistory">
-        <anu-collapsible [collapsed]="false" class="col-12 spacing-around-vertical" [hamBurgerClassNames]="['size-sm']" [isDropdownStyle]="true">
+        <anu-collapsible [collapsed]="false" class="col-12 spacing-around-vertical" [hamBurgerClassNames]="['size-sm']"
+            [isDropdownStyle]="true">
             <anu-collapsible-header>
                 Prompts History
             </anu-collapsible-header>

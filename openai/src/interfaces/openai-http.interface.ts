@@ -13,6 +13,7 @@ export interface OpenaiConfiguration {
     baseApiUrl: OpenaiConfigurationItem;
     endpoints: OpenaiConfigurationItem;
     apiKey: OpenaiConfigurationItem;
+    cleanupKeywords: OpenaiConfigurationItem;
     headers: OpenaiConfigurationItem;    // should contain other headers, like 'Openai-Organization', etc.
     [key: string]: OpenaiConfigurationItem;
 };

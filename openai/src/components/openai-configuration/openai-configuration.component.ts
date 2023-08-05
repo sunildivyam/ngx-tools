@@ -4,6 +4,8 @@ import { OpenaiConfiguration } from '../../interfaces/openai-http.interface';
 import { UtilsService } from '@annuadvent/ngx-core/utils';
 import { CodeBlockInfo } from '@annuadvent/ngx-common-ui/code-block';
 import { OPENAI_CONFIGURATION_DEFAULT } from '../../constants/openai-http.constants';
+import { AppConfigService } from '@annuadvent/ngx-core/app-config';
+import { OpenaiConfig } from '../../interfaces/openai.interface';
 
 @Component({
   selector: 'anu-openai-configuration',
@@ -19,6 +21,7 @@ export class OpenaiConfigurationComponent {
 
   constructor(
     private openaiConfigService: OpenaiConfigService,
+    private appConfigService: AppConfigService,
     private utilsService: UtilsService,
   ) {
 
@@ -35,7 +38,10 @@ export class OpenaiConfigurationComponent {
 
   public loadDefault(event: any): void {
     event.preventDefault();
-    this.config = this.utilsService.deepCopy(OPENAI_CONFIGURATION_DEFAULT);
+    this.config = this.openaiConfigService.mergeKeyConfigWithBaseConfig(
+      this.utilsService.deepCopy(OPENAI_CONFIGURATION_DEFAULT),
+      this.appConfigService.openai as OpenaiConfig
+    );
   }
 
   public loadFromJsonClicked(event: any): void {

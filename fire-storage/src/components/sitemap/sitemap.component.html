@@ -4,7 +4,10 @@
             <!-- Current Sitemap Urls -->
             <anu-card class="col-12 shadow spacing">
                 <anu-card-title>
-                    <a href="#" class="" (click)="loadSitemap($event)">Load sitemap.xml</a>
+                    <div class="row stretch">
+                        <a href="#" class="" (click)="loadSitemap($event)">Load sitemap.xml</a>
+                        <a href="#" class="" (click)="createSitemap($event)">Create sitemap.xml</a>
+                    </div>
                 </anu-card-title>
                 <anu-card-body>
                     <anu-collapsible class="spacing-vertical" *ngIf="sitemapInfo || sitemap"

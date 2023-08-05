@@ -38,7 +38,12 @@ export class SitemapService {
    * @async
    * @returns {Promise<SitemapResponse>}
    */
-  public async getSitemapResponse(): Promise<SitemapResponse> {
+  public async getSitemapResponse(forceClear: boolean = false): Promise<SitemapResponse> {
+    if (forceClear) {
+      const sitemapStr = defaultSitemapXmlStr;
+      return this.prepareSitemapResponse(sitemapStr);
+    }
+
     const sitemapDownloadUrl = await this.sitemapFireSvc.sitemapExists();
     let sitemapStr: string = '';
     if (sitemapDownloadUrl) {
@@ -186,6 +191,28 @@ export class SitemapService {
         {
           loc: {
             _text: `${this.appConfigService.config.apiBaseUrl}/login`
+          },
+          lastmod: {
+            _text: this.utilsSvc.currentDate
+          },
+          priority: {
+            _text: '1.00'
+          }
+        } as SitemapItem,
+        {
+          loc: {
+            _text: `${this.appConfigService.config.apiBaseUrl}/genre`
+          },
+          lastmod: {
+            _text: this.utilsSvc.currentDate
+          },
+          priority: {
+            _text: '1.00'
+          }
+        } as SitemapItem,
+        {
+          loc: {
+            _text: `${this.appConfigService.config.apiBaseUrl}/stories`
           },
           lastmod: {
             _text: this.utilsSvc.currentDate
