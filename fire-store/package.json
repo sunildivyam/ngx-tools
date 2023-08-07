@@ -10,8 +10,8 @@
 		"url": "https://github.com/sunildivyam/ngx-tools.git"
 	},
 	"engines": {
-		"node": "18.16.0",
-		"npm": "9.5.1"
+		"node": "18.17.0",
+		"npm": "9.6.7"
 	},
 	"peerDependencies": {
 		"@angular/common": "^16.1.0",

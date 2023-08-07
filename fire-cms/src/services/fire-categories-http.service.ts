@@ -437,11 +437,6 @@ export class FireCategoriesHttpService {
     if (!pCategory.created) pCategory.created = currentDate;
     if (!pCategory.userId) throw new Error('Category userId is required.');
 
-    // Any modification to a category, will bring it to unpublished, and not up for review.
-    pCategory.isLive = false;
-    pCategory.inReview = false;
-
-
     return this.firestoreHttpService.runQueryToUpdate(CATEGORIES_COLLECTION_ID, pCategory, fieldsToUpdate, false)
       .catch((error) => {
         throw error;

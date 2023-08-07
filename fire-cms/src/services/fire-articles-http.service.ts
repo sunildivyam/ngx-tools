@@ -463,11 +463,8 @@ export class FireArticlesHttpService {
     if (!pArticle.created) pArticle.created = currentDate;
     if (!pArticle.userId) throw new Error('Article userId is required.');
 
-    // Any modification to a article, will bring it to unpublished, and not up for review.
-    pArticle.isLive = false;
-    pArticle.inReview = false;
 
-    return this.firestoreHttpService.runQueryToUpdate(ARTICLES_COLLECTION_ID, article, fieldsToUpdate, false)
+    return this.firestoreHttpService.runQueryToUpdate(ARTICLES_COLLECTION_ID, pArticle, fieldsToUpdate, false)
       .catch((error) => {
         throw error;
       });

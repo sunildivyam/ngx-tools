@@ -14,8 +14,8 @@ export class SitemapComponent {
   @Input() newUrls: Array<SitemapItem> = [];
   @Input() newSitemap: Sitemap;
 
-  @Output() loadSitemapClicked = new EventEmitter<void>();
   @Output() createSitemapClicked = new EventEmitter<void>();
+  @Output() loadSitemapClicked = new EventEmitter<void>();
   @Output() saveClicked = new EventEmitter<Sitemap>();
   @Output() previewClicked = new EventEmitter<void>();
   @Output() checkNewUrlsClicked = new EventEmitter<void>();
