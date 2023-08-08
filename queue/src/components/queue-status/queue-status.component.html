@@ -8,6 +8,7 @@
     {{inprogressCount}}</div>
 <div title="failed" class="text-center accent-deep-light spacing-around-half queue_badge failed">{{failedCount}}</div>
 <div [ngClass]="qStatus" [title]="qStatus" class="text-center accent-deep-light spacing-around-half queue_badge">
-    <a href="javascript:void()" (click)="startClicked($event)">{{ qStatus === 'inprogress' ? '⏸' : '⏵'}}</a>
+    <a href="javascript:void(0)" (click)="startClicked($event)">{{ qStatus === 'inprogress' ? '⏸' : '⏵'}}</a>
 </div>
+<div title="timer" class="text-center accent-deep-light spacing-around-half queue_badge timer">{{timeEllapsed}}s</div>
 <ng-content></ng-content>

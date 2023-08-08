@@ -24,6 +24,8 @@ export class QueueStatusComponent implements OnInit, OnChanges, OnDestroy {
   inprogressCount: number = 0;
   queueSubscription: Subscription = null;
   statusSubscription: Subscription = null;
+  timerSubscription: Subscription = null;
+  timeEllapsed: number = 0;
 
   constructor() {
 
@@ -41,6 +43,7 @@ export class QueueStatusComponent implements OnInit, OnChanges, OnDestroy {
     // Unsubscribe if already subscribed
     this.queueSubscription && this.queueSubscription.unsubscribe();
     this.statusSubscription && this.statusSubscription.unsubscribe();
+    this.timerSubscription && this.timerSubscription.unsubscribe();
   }
 
   private subscribeQueue(): void {
@@ -48,19 +51,23 @@ export class QueueStatusComponent implements OnInit, OnChanges, OnDestroy {
     // Unsubscribe if already subscribed
     this.queueSubscription && this.queueSubscription.unsubscribe();
     this.statusSubscription && this.statusSubscription.unsubscribe();
+    this.timerSubscription && this.timerSubscription.unsubscribe();
 
     // Subscribe queue items change
-    this.queue.queue.subscribe((qItems: Array<QueueItem>) => {
+    this.queue?.queue?.subscribe((qItems: Array<QueueItem>) => {
       this.qItems = qItems;
       this.refreshQueueCounters();
     });
 
     // Subscribe queue status change
-    this.queue.status.subscribe((status: QueueStatusEnum) => this.qStatus = status);
+    this.queue?.status?.subscribe((status: QueueStatusEnum) => this.qStatus = status);
+
+    // Subscribe timer
+    this.queue?.timer?.subscribe((timeStarted: number) => this.timeEllapsed = timeStarted ? Math.round((Date.now() - timeStarted) / 1000) : 0);
   }
 
   private refreshQueueCounters(): void {
-    this.totalCount = 0;
+    this.totalCount = this.qItems?.length || 0;
     this.completedCount = 0;
     this.notstartedCount = 0;
     this.failedCount = 0;
@@ -88,7 +95,7 @@ export class QueueStatusComponent implements OnInit, OnChanges, OnDestroy {
   public startClicked(event: any): void {
     switch (this.qStatus) {
       case QueueStatusEnum.notstarted:
-        this.startClick.emit();
+        this.startClick.emit(event);
         break;
       case QueueStatusEnum.inprogress:
         this.queue?.pause();

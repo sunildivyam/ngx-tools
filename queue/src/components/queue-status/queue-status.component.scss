@@ -29,6 +29,11 @@ $queue_badge_size: 2em;
             &.paused {
                 background-color: rgba(14, 187, 255, 0.534);
             }
+
+            &.timer {
+                border-radius: 0.5rem;
+                width: $queue_badge_size * 2;
+            }
         }
     }
 }

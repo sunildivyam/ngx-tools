@@ -5,4 +5,5 @@ export enum OpenaiPromptTypeEnum {
     questions = 'questions',
     description = 'description',
     content = 'content',
+    image = 'image',
 };

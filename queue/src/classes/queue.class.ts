@@ -129,7 +129,10 @@ export class Queue {
     }
 
     private canNotifyCurrentItems(): boolean {
-        return this.statusValue === QueueStatusEnum.inprogress;
+        // If any of the items are inprogress, that means current batch is not completed yet.
+        // So need not to emit next batch
+
+        return this.statusValue === QueueStatusEnum.inprogress && !this.queueValue.find(item => item.status === QueueStatusEnum.inprogress);
     }
 
     // private Notify change in subjects methods.
