@@ -19,11 +19,12 @@ export class OpenaiFormComponent implements OnInit, OnChanges {
   @Input() prompts: Array<OpenaiPrompt> = [];
   @Input() selectedPromptText: string = '';
   @Input() showHistory: boolean = true;
+  @Input() showPrompts: boolean = true;
 
   @Output() goClicked = new EventEmitter<Array<OpenaiPrompt>>();
 
   currentPrompt: string = '';
-  showPrompts: boolean = false;
+
   selectedPrompt: OpenaiPrompt | undefined;
   selectedResultType: string = 'mdText';
   promptTypes = Object.entries(OpenaiPromptTypeEnum).map((pt) => ({

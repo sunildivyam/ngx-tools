@@ -1,0 +1,37 @@
+:host {
+    anu-collapsible {
+        border-left: 1px solid var(--anu-primary-dark);
+    }
+
+    .group-container {
+        padding: var(--anu-spacing);
+        padding-right: 0;
+    }
+
+    .range-container {
+        padding-left: 1.5rem;
+        padding-right: 2.5rem;
+        height: 2.2rem;
+        align-items: flex-start;
+
+        &>span {
+            position: absolute;
+            top: -0.4rem;
+
+            &.range-min {
+                left: 0;
+            }
+
+            &.range-max {
+                right: 0;
+            }
+        }
+
+        .range-value {
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            z-index: -1;
+        }
+    }
+}

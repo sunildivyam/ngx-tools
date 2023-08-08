@@ -1,0 +1,53 @@
+@import 'mixins';
+
+:host {
+    display: flex;
+    flex-direction: row;
+    flex-flow: wrap;
+    position: relative;
+
+    .image-list-item {
+        background-repeat: no-repeat;
+        background-size: cover;
+        min-height: 12rem;
+        overflow: hidden;
+        
+        &_controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            background-color: rgba(0,0,0,0.1);
+            
+        }
+
+        &_title {
+            background-color: rgba(0,0,0,0.5);
+            word-break: break-all;
+        }
+
+        &_control {
+            &.btn {
+                @include small {
+                    padding: 0.2rem 0.7rem;
+                }
+    
+                @include medium {
+                    padding: 0.2rem 0.7rem;
+                }
+    
+                @include large {
+                    padding: 0.2rem 0.7rem;
+                }
+            }
+        }
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    anu-search-box {
+        transform: scale(0.7);
+    }
+
+}

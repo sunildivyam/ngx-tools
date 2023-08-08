@@ -1,6 +1,6 @@
 {
   "name": "@annuadvent/ngx-tools",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "description": "The ngx-tools library serves as the foundation for the other libraries in the group. It provides core functionalities and abstractions that are utilized across the entire suite of libraries. This includes common services for handling authentication, API communication, error handling, and state management. Furthermore, ngx-tools seamlessly integrates with Firebase, a widely-used backend as a service (BaaS) platform, offering functionalities such as real-time database synchronization, cloud storage, and authentication services.",
   "homepage": "https://github.com/sunildivyam/ngx-tools",
@@ -10,8 +10,8 @@
     "url": "https://github.com/sunildivyam/ngx-tools.git"
   },
   "engines": {
-    "node": "18.16.0",
-    "npm": "9.5.1"
+    "node": "18.17.0",
+    "npm": "9.6.7"
   },
   "keywords": [
     "Angular",
@@ -31,8 +31,8 @@
     "@angular/core": "^16.1.0",
     "openai": "^3.3.0",
     "xml-js": "^1.6.11",
-    "@annuadvent/ngx-core": "^1.0.1",
-    "@annuadvent/ngx-common-ui": "^1.0.1",
+    "@annuadvent/ngx-core": "^1.0.2",
+    "@annuadvent/ngx-common-ui": "^1.0.2",
     "firebase": "^9.23.0",
     "compressorjs": "^1.2.1",
     "firebaseui": "^6.0.2"

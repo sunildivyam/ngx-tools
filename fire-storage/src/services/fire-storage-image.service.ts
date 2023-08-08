@@ -21,20 +21,25 @@ import {
   providedIn: 'root'
 })
 export class FireStorageImageService {
-  public baseStoreUrl: string = '';
+  public baseStorageUrl: string = '';
 
   constructor(
     private fireCommonService: FireCommonService,
   ) {
-    this.baseStoreUrl = this.fireCommonService.firebaseConfig.storage.baseStoreUrl;
+    this.baseStorageUrl = this.fireCommonService.firebaseConfig.storage.baseStorageUrl;
   }
 
-  private buildImageUrl(filePath: string, userId: string = ''): string {
+  private buildImageUrl(fullPathWithFileName: string, userId: string): string {
     return (
-      this.baseStoreUrl +
+      this.baseStorageUrl +
       '/' +
-      (userId ? `${userId}/${filePath}` : '' + filePath)
+      (userId ? `${userId}/${fullPathWithFileName}` : '' + fullPathWithFileName)
     );
+  }
+
+  public getUploadImageValidationText(): string {
+    const { maxKBs, maxWidth, maxHeight, minWidth, minHeight } = this.fireCommonService.firebaseConfig.storage.imageDimensions;
+    return `Allowed width is ${minWidth}px to ${maxWidth}px, height is ${minHeight}px to ${maxHeight}px and size is up to ${maxKBs}KBs`;
   }
 
   public async validateImage(imageData: any): Promise<string> {
@@ -103,7 +108,7 @@ export class FireStorageImageService {
   }
 
   public async uploadImage(
-    filePath: string,
+    fullPathWithFileName: string,
     imageData: any,
     overWrite: boolean = false,
     userId: string = '',
@@ -113,7 +118,7 @@ export class FireStorageImageService {
       this.fireCommonService.initOrGetFirebaseApp(),
       this.fireCommonService.firebaseConfig.app.storageBucket
     );
-    const fileUrl = this.buildImageUrl(filePath, userId);
+    const fileUrl = this.buildImageUrl(fullPathWithFileName, userId);
     const fileRef = ref(fireStorage, fileUrl);
 
     // If exists
@@ -121,7 +126,7 @@ export class FireStorageImageService {
       try {
         const isExists = await getDownloadURL(fileRef);
         if (isExists) {
-          throw new Error('Image already exists -' + filePath);
+          throw new Error('Image already exists -' + fullPathWithFileName);
         }
       } catch (error: any) {
         if (error.code !== 'storage/object-not-found') {
@@ -137,7 +142,7 @@ export class FireStorageImageService {
       }
 
       const uploadResult = await uploadBytes(fileRef, imageData);
-      const downloadUrl = await this.getImageUrl(filePath, userId);
+      const downloadUrl = await this.getImageUrl(fullPathWithFileName, userId);
       const imageFileInfo: ImageFileInfo = {
         name: uploadResult.ref.name,
         fullPath: uploadResult.ref.fullPath,
@@ -151,14 +156,14 @@ export class FireStorageImageService {
   }
 
   public async getImageUrl(
-    filePath: string,
+    fullPathWithFileName: string,
     userId: string = ''
   ): Promise<string> {
     const fireStorage = getStorage(
       this.fireCommonService.initOrGetFirebaseApp(),
       this.fireCommonService.firebaseConfig.app.storageBucket
     );
-    const fileUrl = this.buildImageUrl(filePath, userId);
+    const fileUrl = this.buildImageUrl(fullPathWithFileName, userId);
     const fileRef = ref(fireStorage, fileUrl);
 
     try {
@@ -171,34 +176,34 @@ export class FireStorageImageService {
   }
 
   public async deleteImage(
-    filePath: string,
+    fullPathWithFileName: string,
     userId: string = ''
-  ): Promise<void> {
+  ): Promise<string> {
     const fireStorage = getStorage(
       this.fireCommonService.initOrGetFirebaseApp(),
       this.fireCommonService.firebaseConfig.app.storageBucket
     );
-    const fileUrl = this.buildImageUrl(filePath, userId);
+    const fileUrl = this.buildImageUrl(fullPathWithFileName, userId);
     const fileRef = ref(fireStorage, fileUrl);
 
     try {
-      return await deleteObject(fileRef);
+      await deleteObject(fileRef);
+      return fileUrl;
     } catch (error: any) {
       throw error;
     }
   }
 
-  public async getImagesList(
-    filePath: string,
+  public async getImagesList(    
+    userId: string = '',
     pageSize: number = 10,
     nextPageToken: any = null,
-    userId: string = ''
   ): Promise<ImageFileInfoList> {
     const fireStorage = getStorage(
       this.fireCommonService.initOrGetFirebaseApp(),
       this.fireCommonService.firebaseConfig.app.storageBucket
     );
-    const lookinFolder = this.buildImageUrl(filePath, userId);
+    const lookinFolder = this.buildImageUrl('', userId);
     const listRef = ref(fireStorage, lookinFolder);
 
     try {
@@ -222,14 +227,14 @@ export class FireStorageImageService {
   }
 
   public async imageExists(
-    filePath: string,
+    fullPathWithFileName: string,
     userId: string = ''
   ): Promise<boolean> {
     const fireStorage = getStorage(
       this.fireCommonService.initOrGetFirebaseApp(),
       this.fireCommonService.firebaseConfig.app.storageBucket
     );
-    const fileUrl = this.buildImageUrl(filePath, userId);
+    const fileUrl = this.buildImageUrl(fullPathWithFileName, userId);
     const fileRef = ref(fireStorage, fileUrl);
 
     try {

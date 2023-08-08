@@ -1,0 +1,14 @@
+<div title="Total" class="text-center accent-deep-light spacing-around-half queue_badge">
+    {{totalCount}}</div>
+<div title="notstarted" class="text-center accent-deep-light spacing-around-half queue_badge notstarted">
+    {{notstartedCount}}</div>
+<div title="completed" class="text-center accent-deep-light spacing-around-half queue_badge completed">
+    {{completedCount}}</div>
+<div title="inprogress" class="text-center accent-deep-light spacing-around-half queue_badge inprogress">
+    {{inprogressCount}}</div>
+<div title="failed" class="text-center accent-deep-light spacing-around-half queue_badge failed">{{failedCount}}</div>
+<div [ngClass]="qStatus" [title]="qStatus" class="text-center accent-deep-light spacing-around-half queue_badge">
+    <a href="javascript:void(0)" (click)="startClicked($event)">{{ qStatus === 'inprogress' ? '⏸' : '⏵'}}</a>
+</div>
+<div title="timer" class="text-center accent-deep-light spacing-around-half queue_badge timer">{{timeEllapsed}}s</div>
+<ng-content></ng-content>

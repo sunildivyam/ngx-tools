@@ -13,7 +13,7 @@ export interface FireStorageImageSpecs {
 };
 
 export interface FireStorageConfig {
-    baseStoreUrl: string;     // folder path inside bucket, ex. annu-business/articles
+    baseStorageUrl: string;     // folder path inside bucket, ex. annu-business/articles
     fireStorageBaseApiUrl: string;  // API full base url
     imageDimensions: FireStorageImageSpecs;
 };

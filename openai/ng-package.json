@@ -3,6 +3,10 @@
 	"dest": "../../../dist/ngx-tools/openai",
 	"lib": {
 		"entryFile": "./public-api.ts",
-		"cssUrl": "inline"
+		"cssUrl": "inline",
+		"styleIncludePaths": [
+			"../../../dist/ngx-common-ui/scss",
+			"../../../node_modules/@annuadvent/ngx-common-ui/scss"
+		]
 	}
 }

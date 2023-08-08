@@ -20,9 +20,11 @@ export class ApiInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     if (request.url.includes(`/api/`)) {
       const apiKey = (this.appConfigService.firebase as FirebaseConfig)?.app?.apiKey;
+      
       let clonedRequest = request.clone({
         setParams: { key: apiKey }
       });
+
       if (this.fireAuthService.getCurrentUserId()) {
         return from(this.fireAuthService.getAccessToken()).pipe(
           switchMap(token => {

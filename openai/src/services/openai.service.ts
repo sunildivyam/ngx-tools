@@ -11,6 +11,7 @@ import {
   ImagesResponseDataInner,
 } from 'openai';
 import { OpenaiConfig, OpenaiImageSize } from '../interfaces/openai.interface';
+import { OpenaiConfigService } from './openai-config.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,13 @@ export class OpenaiService {
   openAi: OpenAIApi | undefined;
   openaiConfig: OpenaiConfig | undefined;
 
-  constructor() { }
+  constructor(
+    private openaiConfigService: OpenaiConfigService,
+  ) {
+    this.openaiConfigService.config.subscribe(config => {
+      this.initOpenai(this.openaiConfigService.getKeyConfig(config));
+    })
+  }
 
   public initOpenai(openaiConfig: OpenaiConfig) {
     if (!openaiConfig || !openaiConfig.apiKey || !openaiConfig.organization) throw new Error('Invalid openai configuration.');
@@ -33,6 +40,7 @@ export class OpenaiService {
     });
 
     delete configuration.baseOptions.headers['User-Agent'];
+    this.openAi = null;
     this.openAi = new OpenAIApi(configuration);
   }
 

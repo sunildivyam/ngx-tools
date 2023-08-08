@@ -14,6 +14,7 @@ export class SitemapComponent {
   @Input() newUrls: Array<SitemapItem> = [];
   @Input() newSitemap: Sitemap;
 
+  @Output() createSitemapClicked = new EventEmitter<void>();
   @Output() loadSitemapClicked = new EventEmitter<void>();
   @Output() saveClicked = new EventEmitter<Sitemap>();
   @Output() previewClicked = new EventEmitter<void>();
@@ -34,6 +35,11 @@ export class SitemapComponent {
     this.loadSitemapClicked.emit();
   }
 
+  public createSitemap(event: any): void {
+    event.preventDefault();
+    this.currentSitemapCollapsed = true;
+    this.createSitemapClicked.emit();
+  }
   public checkNewUrls(event: any): void {
     event.preventDefault();
     this.checkNewUrlsCollapsed = true;
