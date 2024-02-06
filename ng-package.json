@@ -5,8 +5,8 @@
     "entryFile": "public-api.ts",
     "cssUrl": "inline",
     "styleIncludePaths": [
-			"../../../dist/ngx-common-ui/scss",
-			"../../../node_modules/@annuadvent/ngx-common-ui/scss"
-		]
+      "../../../dist/ngx-common-ui/scss",
+      "../../../node_modules/@annuadvent/ngx-common-ui/scss"
+    ]
   }
 }

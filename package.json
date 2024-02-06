@@ -10,8 +10,8 @@
     "url": "https://github.com/sunildivyam/ngx-tools.git"
   },
   "engines": {
-    "node": "18.17.0",
-    "npm": "9.6.7"
+    "node": "20.9.0",
+    "npm": "10.1.0"
   },
   "keywords": [
     "Angular",
@@ -27,15 +27,15 @@
     "javascript framework"
   ],
   "peerDependencies": {
-    "@angular/common": "^16.1.0",
-    "@angular/core": "^16.1.0",
+    "@angular/common": "^17.1.2",
+    "@angular/core": "^17.1.2",
     "openai": "^3.3.0",
     "xml-js": "^1.6.11",
     "@annuadvent/ngx-core": "^1.0.2",
     "@annuadvent/ngx-common-ui": "^1.0.2",
-    "firebase": "^9.23.0",
+    "firebase": "^10.8.0",
     "compressorjs": "^1.2.1",
-    "firebaseui": "^6.0.2"
+    "firebaseui": "^6.1.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
