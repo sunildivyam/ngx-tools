@@ -5,5 +5,6 @@ export const LoginStatusComponent: any = {
         profilePageUrl: '',
         loggedOutPageUrl: '',
         theme: 'primary',
+        showLogoutBtn: true,
     }
 }

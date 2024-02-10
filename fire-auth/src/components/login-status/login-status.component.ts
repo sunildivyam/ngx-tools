@@ -13,6 +13,7 @@ export class LoginStatusComponent implements OnInit {
   @Input() profilePageUrl: string = '';
   @Input() loggedOutPageUrl: string = '';
   @Input() theme: string = '';
+  @Input() showLogoutBtn: boolean = true;
 
   @Output() signInClicked: EventEmitter<void> = new EventEmitter<void>();
   @Output() signOutClicked: EventEmitter<void> = new EventEmitter<void>();
