@@ -1,25 +1,45 @@
 <anu-error *ngIf="errorMsg" code="UNKNOWN" [message]="errorMsg"></anu-error>
 <form class="container relative disable-select">
-    <label>Image Prompt</label>
-    <input type="text" [(ngModel)]="imagePromptText" name="imagePromptText" />
-    <label>Image file name to save generated image<small class="error">* Any image with this filename will be
-            overwritten in your image library.</small></label>
-    <input type="text" [(ngModel)]="imageFileName" name="imageFileName" />
-    <div *ngIf="!!generatedBase64Image" class="row">
-        <label>Generated Image <a class="primary" href="javascript:void(0)"
-                (click)="generatedBase64Image = ''">Clear</a></label>
-        <img class="oif_image spacing-around-vertical" [src]="'data:image/image/jpg;base64,'+ generatedBase64Image" />
-    </div>
-    <div *ngIf="savedImageUrl" class="row">
-        <img class="oif_image spacing-around-vertical" [src]="savedImageUrl" />
-    </div>
+  <label>Image Prompt</label>
+  <input type="text" [(ngModel)]="imagePromptText" name="imagePromptText" />
+  <label
+    >Image file name to save generated image<small class="error"
+      >* Any image with this filename will be overwritten in your image
+      library.</small
+    ></label
+  >
+  <input type="text" [(ngModel)]="imageFileName" name="imageFileName" />
+  <div *ngIf="!!generatedBase64Image" class="row">
+    <label
+      >Generated Image
+      <a
+        class="primary"
+        href="javascript:void(0)"
+        (click)="generatedBase64Image = ''"
+        >Clear</a
+      ></label
+    >
+    <img
+      class="oif_image spacing-around-v"
+      [src]="'data:image/image/jpg;base64,' + generatedBase64Image"
+    />
+  </div>
+  <div *ngIf="savedImageUrl" class="row">
+    <img class="oif_image spacing-around-v" [src]="savedImageUrl" />
+  </div>
 
-    <p *ngIf="errorMsg">{{errorMsg}}</p>
-    <div class="row spacing">
-        <div class="col-6 center"><a class="btn primary" href="javascript:void(0)"
-                (click)="generateImage()">Generate</a></div>
-        <div class="col-6 center"><a class="btn primary" href="javascript:void(0)" (click)="uploadImage()">Upload</a>
-        </div>
+  <p *ngIf="errorMsg">{{ errorMsg }}</p>
+  <div class="row spacing">
+    <div class="col-6 center">
+      <a class="btn primary" href="javascript:void(0)" (click)="generateImage()"
+        >Generate</a
+      >
     </div>
-    <anu-spinner [show]="loading"></anu-spinner>
+    <div class="col-6 center">
+      <a class="btn primary" href="javascript:void(0)" (click)="uploadImage()"
+        >Upload</a
+      >
+    </div>
+  </div>
+  <anu-spinner [show]="loading"></anu-spinner>
 </form>

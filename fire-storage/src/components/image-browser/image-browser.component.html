@@ -1,77 +1,159 @@
-<anu-error class="container" *ngIf="error" [code]="error?.code" [message]="error?.message"></anu-error>
+<anu-error
+  class="container"
+  *ngIf="error"
+  [code]="error?.code"
+  [message]="error?.message"
+></anu-error>
 
 <div class="row">
-    <div class="col-sm-12 col-md-6 col-lg-6">
-        <anu-card class="border-round shadow spacing-half relative">
-            <anu-card-title>
-                <h3>Upload Image</h3>
-            </anu-card-title>
-            <anu-card-body>                
-                <span *ngIf="uploadHelpText"><small>{{uploadHelpText}}</small></span>
-                <div class="form-group container center">
-                    <input #fileInput id="file" type="file" class="" (change)="onFileChange($event)" />
-                    <input type="button" class="btn" (click)="uploadClick()" value="Choose file to upload...">
-                    <input type="text" class="spacing-around-vertical-half" [(ngModel)]="choosenFileName" placeholder="No image to upload"/>
-                    <a class="btn primary spacing-around-vertical-half" href="#" (click)="uploadFileClick($event)" title="Upload">Upload</a>
-                </div>
-                <anu-spinner class="col-12" [show]="loading.uploadImageFile"></anu-spinner>
-            </anu-card-body>
-        </anu-card>
-    </div>
-    <div class="col-sm-12 col-md-6 col-lg-6">
-        <img *ngIf="selectedImageFile" class="selected-image shadow" [src]="'getImage?imageId=' + selectedImageFile?.fullPath" [alt]="selectedImageFile?.name" />
-    </div>
+  <div class="col-sm-12 col-md-6 col-lg-6">
+    <anu-card class="border-round shadow spacing-half relative">
+      <anu-card-title>
+        <h3>Upload Image</h3>
+      </anu-card-title>
+      <anu-card-body>
+        <span *ngIf="uploadHelpText"
+          ><small>{{ uploadHelpText }}</small></span
+        >
+        <div class="form-group container center">
+          <input
+            #fileInput
+            id="file"
+            type="file"
+            class=""
+            (change)="onFileChange($event)"
+          />
+          <input
+            type="button"
+            class="btn"
+            (click)="uploadClick()"
+            value="Choose file to upload..."
+          />
+          <input
+            type="text"
+            class="spacing-around-v-half"
+            [(ngModel)]="choosenFileName"
+            placeholder="No image to upload"
+          />
+          <a
+            class="btn primary spacing-around-v-half"
+            href="#"
+            (click)="uploadFileClick($event)"
+            title="Upload"
+            >Upload</a
+          >
+        </div>
+        <anu-spinner
+          class="col-12"
+          [show]="loading.uploadImageFile"
+        ></anu-spinner>
+      </anu-card-body>
+    </anu-card>
+  </div>
+  <div class="col-sm-12 col-md-6 col-lg-6">
+    <img
+      *ngIf="selectedImageFile"
+      class="selected-image shadow"
+      [src]="'getImage?imageId=' + selectedImageFile?.fullPath"
+      [alt]="selectedImageFile?.name"
+    />
+  </div>
 </div>
-
 
 <div class="row border center">
-    <!-- Count -->
-    <strong>{{imagesFilesFilteredCount}} / {{imageFiles?.length || 0}}</strong>
-    <!-- Image Files filter -->
-    <anu-search-box classs="col-12" [items]="imageFiles" [keys]="['name']"
-        (changed)="onImageListFilter($event)"></anu-search-box>
-    <!-- Reload list  -->
-    <a class="spacing" href="#" (click)="refreshClick($event)" title="Reload List">⟳ Reload</a>
+  <!-- Count -->
+  <strong
+    >{{ imagesFilesFilteredCount }} / {{ imageFiles?.length || 0 }}</strong
+  >
+  <!-- Image Files filter -->
+  <anu-search-box
+    classs="col-12"
+    [items]="imageFiles"
+    [keys]="['name']"
+    (changed)="onImageListFilter($event)"
+  ></anu-search-box>
+  <!-- Reload list  -->
+  <a class="spacing" href="#" (click)="refreshClick($event)" title="Reload List"
+    >⟳ Reload</a
+  >
 </div>
-<div class="row border">    
-    <ng-container *ngFor="let imgFile of imagesFilesFiltered">
-        <anu-card 
-        class="image-list-item border-round border col-sm-12 col-md-4 col-lg-4 relative" 
-        [style.background-image]="previewOnImages[imgFile.fullPath] ? 'url(\'getImage?imageId=' + imgFile.fullPath + '\')': 'none'"
-        [class.shadow]="imgFile.fullPath === selectedImageFile?.fullPath">  
-            <anu-card-title class="spacing-half image-list-item_title accent-deep-light">
-                {{imgFile.name}}
-                <anu-spinner class="col-12" [show]="loading?.imageFile ? loading.imageFile[imgFile?.fullPath]: false"></anu-spinner>
-            </anu-card-title>
-            <anu-card-footer>
-                <div class="row right nowrap image-list-item_controls spacing-vertical-half spacing-horizontal">
-                    <a class="image-list-item_control btn primary accent-deep-light" href="#" (click)="previewClick($event, imgFile)" *ngIf="!previewOnImages[imgFile.fullPath]" title="Preview">👁</a>                    
-                    <a class="image-list-item_control btn primary accent-deep-light" href="#" (click)="selectClick($event, imgFile)" *ngIf="imgFile.fullPath !== selectedImageFile?.fullPath" title="select">✔</a>
-                    <a class="image-list-item_control btn error accent-deep-light" href="#" (click)="deleteClick($event, imgFile)" title="delete">X</a>
-                </div>
-            </anu-card-footer>
-        </anu-card>
-    </ng-container>
-
-    <anu-card *ngIf="nextPageToken" class="image-list-item border-round border spacing-half col-sm-12 col-md-4 col-lg-4 relative">
-        <anu-card-body class="center center-text col-12">
-            <a href="#" (click)="loadMoreClick($event)">Load more...</a>
-            <anu-spinner class="col-12" [show]="loading.loadMore"></anu-spinner>
-        </anu-card-body>        
+<div class="row border">
+  <ng-container *ngFor="let imgFile of imagesFilesFiltered">
+    <anu-card
+      class="image-list-item border-round border col-sm-12 col-md-4 col-lg-4 relative"
+      [style.background-image]="
+        previewOnImages[imgFile.fullPath]
+          ? 'url(\'getImage?imageId=' + imgFile.fullPath + '\')'
+          : 'none'
+      "
+      [class.shadow]="imgFile.fullPath === selectedImageFile?.fullPath"
+    >
+      <anu-card-title
+        class="spacing-half image-list-item_title accent-deep-light"
+      >
+        {{ imgFile.name }}
+        <anu-spinner
+          class="col-12"
+          [show]="
+            loading?.imageFile ? loading.imageFile[imgFile?.fullPath] : false
+          "
+        ></anu-spinner>
+      </anu-card-title>
+      <anu-card-footer>
+        <div
+          class="row right nowrap image-list-item_controls spacing-v-half spacing-h"
+        >
+          <a
+            class="image-list-item_control btn primary accent-deep-light"
+            href="#"
+            (click)="previewClick($event, imgFile)"
+            *ngIf="!previewOnImages[imgFile.fullPath]"
+            title="Preview"
+            >👁</a
+          >
+          <a
+            class="image-list-item_control btn primary accent-deep-light"
+            href="#"
+            (click)="selectClick($event, imgFile)"
+            *ngIf="imgFile.fullPath !== selectedImageFile?.fullPath"
+            title="select"
+            >✔</a
+          >
+          <a
+            class="image-list-item_control btn error accent-deep-light"
+            href="#"
+            (click)="deleteClick($event, imgFile)"
+            title="delete"
+            >X</a
+          >
+        </div>
+      </anu-card-footer>
     </anu-card>
-    <anu-spinner class="col-12" [show]="loading.imageFiles"></anu-spinner>
+  </ng-container>
+
+  <anu-card
+    *ngIf="nextPageToken"
+    class="image-list-item border-round border spacing-half col-sm-12 col-md-4 col-lg-4 relative"
+  >
+    <anu-card-body class="center center-text col-12">
+      <a href="#" (click)="loadMoreClick($event)">Load more...</a>
+      <anu-spinner class="col-12" [show]="loading.loadMore"></anu-spinner>
+    </anu-card-body>
+  </anu-card>
+  <anu-spinner class="col-12" [show]="loading.imageFiles"></anu-spinner>
 </div>
 
-<anu-modal 
-    (okClick)="deleteImageOkClick()"
-    (cancelClick)="deleteImageCancelClick()"
-	[cancelLabel]="'No'"
-	[enableCancel]='true'
-	[enableClose]='true'
-	[enableOk]='true'
-	[okLabel]="'Yes'"
-	[opened]="deleteConfirmModalOpened"
-	[modalTitle]="'Confirm Image Deletion'">
-	<p>This will delete the image file permanently and can not be restored.</p>
-    <strong>Do you want to continue?</strong>
+<anu-modal
+  (okClick)="deleteImageOkClick()"
+  (cancelClick)="deleteImageCancelClick()"
+  [cancelLabel]="'No'"
+  [enableCancel]="true"
+  [enableClose]="true"
+  [enableOk]="true"
+  [okLabel]="'Yes'"
+  [opened]="deleteConfirmModalOpened"
+  [modalTitle]="'Confirm Image Deletion'"
+>
+  <p>This will delete the image file permanently and can not be restored.</p>
+  <strong>Do you want to continue?</strong>
 </anu-modal>
