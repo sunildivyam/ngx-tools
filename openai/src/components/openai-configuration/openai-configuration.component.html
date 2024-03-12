@@ -1,62 +1,119 @@
 <div class="row right">
-    <a class="btn primary" (click)="loadFromJsonClicked($event)">Load From Json</a>
-    <a class="btn primary" (click)="loadDefault($event)">Load Default</a>
-    <a class="btn primary" (click)="updateClicked($event)">Update</a>
+  <a class="btn primary" (click)="loadFromJsonClicked($event)"
+    >Load From Json</a
+  >
+  <a class="btn primary" (click)="loadDefault($event)">Load Default</a>
+  <a class="btn primary" (click)="updateClicked($event)">Update</a>
 </div>
 
 <div class="container" *ngFor="let cKey of getObjectKeys(config)">
-    <ng-container *ngTemplateOutlet="tree;context:{itemKey: cKey, item: config[cKey]}"></ng-container>
+  <ng-container
+    *ngTemplateOutlet="tree; context: { itemKey: cKey, item: config[cKey] }"
+  ></ng-container>
 </div>
 
-
 <ng-template #tree let-item="item" let-itemKey="itemKey">
-    <ng-container *ngIf="item">
-        <div class="row" *ngIf="item.type === 'string'">
-            <label>{{itemKey}}</label>
-            <input *ngIf="!item.rangeValues?.length" type="text" [(ngModel)]="item.value" [placeholder]="itemKey" />
-            <select *ngIf="item.rangeValues?.length" [(ngModel)]="item.value">
-                <option [value]="rItem" *ngFor="let rItem of item.rangeValues">{{rItem}}</option>
-            </select>
+  <ng-container *ngIf="item">
+    <div class="row" *ngIf="item.type === 'string'">
+      <label>{{ itemKey }}</label>
+      <input
+        *ngIf="!item.rangeValues?.length"
+        type="text"
+        [(ngModel)]="item.value"
+        [placeholder]="itemKey"
+      />
+      <select *ngIf="item.rangeValues?.length" [(ngModel)]="item.value">
+        <option [value]="rItem" *ngFor="let rItem of item.rangeValues">
+          {{ rItem }}
+        </option>
+      </select>
+    </div>
+    <div class="row" *ngIf="item.type === 'number'">
+      <label>{{ itemKey }}</label>
+
+      <div
+        class="row stretch range-container relative"
+        *ngIf="item.min || item.max"
+      >
+        <span class="range-min">{{ item.min }}</span>
+        <small class="range-value">{{ item.value }}</small>
+        <input
+          class="container"
+          type="range"
+          [step]="item.step || 1"
+          [min]="item.min"
+          [max]="item.max"
+          [title]="item.value"
+          [(ngModel)]="item.value"
+        />
+        <span class="range-max">{{ item.max }}</span>
+      </div>
+      <input
+        *ngIf="!item.min && !item.max"
+        type="number"
+        [(ngModel)]="item.value"
+      />
+    </div>
+
+    <anu-collapsible
+      class="container border-round spacing-around-v"
+      *ngIf="item.type === 'Object'"
+      [collapsed]="false"
+      [hamBurgerClassNames]="[
+        'size-sm',
+        'primary-dark-grad',
+        'border-round',
+        'spacing-half',
+        'accent-normal'
+      ]"
+      [isDropdownStyle]="false"
+    >
+      <anu-collapsible-header class="">
+        <strong class="accent-normal">{{ itemKey }}</strong>
+      </anu-collapsible-header>
+      <anu-collapsible-content class="container">
+        <div
+          class="container group-container"
+          *ngFor="let cKey of getObjectKeys(item.value)"
+        >
+          <ng-container
+            *ngTemplateOutlet="
+              tree;
+              context: { itemKey: cKey, item: item.value[cKey] }
+            "
+          ></ng-container>
         </div>
-        <div class="row" *ngIf="item.type === 'number'">
-            <label>{{itemKey}}</label>
-
-            <div class="row stretch range-container relative" *ngIf="item.min || item.max">
-                <span class="range-min">{{item.min}}</span>
-                <small class="range-value">{{item.value}}</small>
-                <input class="container" type="range" [step]="item.step || 1" [min]="item.min" [max]="item.max"
-                    [title]="item.value" [(ngModel)]="item.value" />
-                <span class="range-max">{{item.max}}</span>
-            </div>
-            <input *ngIf="!item.min && !item.max" type="number" [(ngModel)]="item.value" />
-        </div>
-
-
-        <anu-collapsible class="container border-round spacing-around-vertical" *ngIf="item.type === 'Object'"
-            [collapsed]="false"
-            [hamBurgerClassNames]="['size-sm', 'primary-dark-grad', 'border-round', 'spacing-half', 'accent-deep-light']"
-            [isDropdownStyle]="false">
-            <anu-collapsible-header class="">
-                <strong class="accent-deep-light">{{itemKey}}</strong>
-            </anu-collapsible-header>
-            <anu-collapsible-content class="container">
-                <div class="container group-container" *ngFor="let cKey of getObjectKeys(item.value)">
-                    <ng-container
-                        *ngTemplateOutlet="tree;context:{itemKey: cKey, item: item.value[cKey]}"></ng-container>
-                </div>
-            </anu-collapsible-content>
-        </anu-collapsible>
-    </ng-container>
-    <anu-error *ngIf="!item" code="UNKNOWN" message="No Config Item available"></anu-error>
+      </anu-collapsible-content>
+    </anu-collapsible>
+  </ng-container>
+  <anu-error
+    *ngIf="!item"
+    code="UNKNOWN"
+    message="No Config Item available"
+  ></anu-error>
 </ng-template>
 
-
-<anu-modal (cancelClick)="loadFromJsonCancelClicked($event)" (okClick)="loadFromJsonOkClicked($event)"
-    [cancelLabel]="'Cancel'" [enableCancel]="true" [enableClose]="true" [enableOk]="true" [okLabel]="'Ok'"
-    [opened]="showLoadFromJsonModal" [title]="'Load Configuration from Json'">
-
-    <anu-code-block (changed)="fromJsonConfigStrChanged($event)" [enableEdit]="true" [language]="'json'"
-        [source]='fromJsonConfigStr'>
-    </anu-code-block>
-    <anu-error *ngIf="fromJsonErrorMsg" code="JSON_PARSE_ERROR" [message]="fromJsonErrorMsg"></anu-error>
+<anu-modal
+  (cancelClick)="loadFromJsonCancelClicked($event)"
+  (okClick)="loadFromJsonOkClicked($event)"
+  [cancelLabel]="'Cancel'"
+  [enableCancel]="true"
+  [enableClose]="true"
+  [enableOk]="true"
+  [okLabel]="'Ok'"
+  [opened]="showLoadFromJsonModal"
+  [title]="'Load Configuration from Json'"
+>
+  <anu-code-block
+    (changed)="fromJsonConfigStrChanged($event)"
+    [enableEdit]="true"
+    [language]="'json'"
+    [source]="fromJsonConfigStr"
+  >
+  </anu-code-block>
+  <anu-error
+    *ngIf="fromJsonErrorMsg"
+    code="JSON_PARSE_ERROR"
+    [message]="fromJsonErrorMsg"
+  ></anu-error>
 </anu-modal>

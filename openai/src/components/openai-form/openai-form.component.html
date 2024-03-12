@@ -1,37 +1,63 @@
 <form class="container disable-select">
+  <div class="input-container row nowrap">
+    <select
+      *ngIf="showPrompts"
+      class="prompt-types"
+      name="prompt-types"
+      [(ngModel)]="selectedPromptType"
+    >
+      <option [value]="optType.value" *ngFor="let optType of promptTypes">
+        {{ optType.key }}
+      </option>
+    </select>
+    <input
+      name="openaiPrompt"
+      type="text"
+      placeholder="Write your prompt here"
+      [(ngModel)]="currentPrompt"
+    />
+    <a
+      href="javascript:void(0)"
+      class="btn primary"
+      (click)="goBtnClick($event)"
+      >⌕</a
+    >
+  </div>
 
-    <div class="input-container row nowrap">
-        <select *ngIf="showPrompts" class="prompt-types" name="prompt-types" [(ngModel)]="selectedPromptType">
-            <option [value]="optType.value" *ngFor="let optType of promptTypes">{{optType.key}}</option>
-        </select>
-        <input name="openaiPrompt" type="text" placeholder="Write your prompt here" [(ngModel)]="currentPrompt" />
-        <a href="javascript:void(0)" class="btn primary" (click)="goBtnClick($event)">⌕</a>
-    </div>
-
-    <div class="row" *ngIf="showHistory">
-        <anu-collapsible [collapsed]="false" class="col-12 spacing-around-vertical" [hamBurgerClassNames]="['size-sm']"
-            [isDropdownStyle]="true">
-            <anu-collapsible-header>
-                Prompts History
-            </anu-collapsible-header>
-            <anu-collapsible-content class="row">
-                <div class="col-6">
-                    <select name="prompt-list" [(ngModel)]="selectedPromptText" (ngModelChange)="promptListChanged()">
-                        <option [ngValue]="''">Select..</option>
-                        <option [ngValue]="prompt.prompt" *ngFor="let prompt of prompts">{{prompt.prompt}}</option>
-                    </select>
-                </div>
-                <div class="col-6">
-                    <select name="result-types" [(ngModel)]="selectedResultType">
-                        <option value="mdText">Markdown</option>
-                        <option value="htmlText">HTML</option>
-                        <option value="jsonText">JSON</option>
-                    </select>
-                </div>
-                <div class="col-12">
-                    <textarea readonly>{{selectedPrompt?.message[selectedResultType]}}</textarea>
-                </div>
-            </anu-collapsible-content>
-        </anu-collapsible>
-    </div>
+  <div class="row" *ngIf="showHistory">
+    <anu-collapsible
+      [collapsed]="false"
+      class="col-12 spacing-around-v"
+      [hamBurgerClassNames]="['size-sm']"
+      [isDropdownStyle]="true"
+    >
+      <anu-collapsible-header> Prompts History </anu-collapsible-header>
+      <anu-collapsible-content class="row">
+        <div class="col-6">
+          <select
+            name="prompt-list"
+            [(ngModel)]="selectedPromptText"
+            (ngModelChange)="promptListChanged()"
+          >
+            <option [ngValue]="''">Select..</option>
+            <option [ngValue]="prompt.prompt" *ngFor="let prompt of prompts">
+              {{ prompt.prompt }}
+            </option>
+          </select>
+        </div>
+        <div class="col-6">
+          <select name="result-types" [(ngModel)]="selectedResultType">
+            <option value="mdText">Markdown</option>
+            <option value="htmlText">HTML</option>
+            <option value="jsonText">JSON</option>
+          </select>
+        </div>
+        <div class="col-12">
+          <textarea readonly>{{
+            selectedPrompt?.message[selectedResultType]
+          }}</textarea>
+        </div>
+      </anu-collapsible-content>
+    </anu-collapsible>
+  </div>
 </form>

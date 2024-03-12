@@ -14,22 +14,24 @@ import { OpenaiConfig, OpenaiImageSize } from '../interfaces/openai.interface';
 import { OpenaiConfigService } from './openai-config.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class OpenaiService {
   openAi: OpenAIApi | undefined;
   openaiConfig: OpenaiConfig | undefined;
 
-  constructor(
-    private openaiConfigService: OpenaiConfigService,
-  ) {
-    this.openaiConfigService.config.subscribe(config => {
+  constructor(private openaiConfigService: OpenaiConfigService) {
+    this.openaiConfigService.config.subscribe((config) => {
       this.initOpenai(this.openaiConfigService.getKeyConfig(config));
-    })
+    });
   }
 
   public initOpenai(openaiConfig: OpenaiConfig) {
-    if (!openaiConfig || !openaiConfig.apiKey || !openaiConfig.organization) throw new Error('Invalid openai configuration.');
+    if (!openaiConfig || !openaiConfig.apiKey || !openaiConfig.organization) {
+      console.log('Invalid openai configuration.');
+      return;
+      // throw new Error('Invalid openai configuration.');
+    }
 
     this.openaiConfig = { ...openaiConfig };
 
@@ -45,10 +47,14 @@ export class OpenaiService {
   }
 
   public async getChatResponse(prompts: Array<string>): Promise<string> {
-    if (!this.openAi) throw new Error('Openai is not initialzed. Use initOpenai(openaiConfig) to initialize');
-    if (!prompts || !prompts.length) throw new Error(
-      'Not a valid Prompt. Provide one or more prompts in an array of strings.'
-    );
+    if (!this.openAi)
+      throw new Error(
+        'Openai is not initialzed. Use initOpenai(openaiConfig) to initialize'
+      );
+    if (!prompts || !prompts.length)
+      throw new Error(
+        'Not a valid Prompt. Provide one or more prompts in an array of strings.'
+      );
 
     const messages: Array<ChatCompletionRequestMessage> = prompts.map(
       (p) => ({ role: 'user', content: p } as ChatCompletionRequestMessage)
@@ -74,9 +80,12 @@ export class OpenaiService {
   public async getImagetResponse(
     promptText: string,
     imagesCount: number = 1,
-    imageSize: OpenaiImageSize,
+    imageSize: OpenaiImageSize
   ): Promise<Array<string>> {
-    if (!this.openAi) throw new Error('Openai is not initialzed. Use initOpenai(openaiConfig) to initialize');
+    if (!this.openAi)
+      throw new Error(
+        'Openai is not initialzed. Use initOpenai(openaiConfig) to initialize'
+      );
 
     if (!promptText) throw new Error('Not a valid Image Prompt.');
 
@@ -87,12 +96,14 @@ export class OpenaiService {
       response_format: CreateImageRequestResponseFormatEnum.B64Json,
     };
 
-    const response = await this.openAi.createImage(req)
+    const response = await this.openAi.createImage(req);
 
     const imagesData: Array<ImagesResponseDataInner> =
       response.data?.data || [];
 
-    const base64Images = imagesData.map((data: ImagesResponseDataInner) => data.b64_json || '');
+    const base64Images = imagesData.map(
+      (data: ImagesResponseDataInner) => data.b64_json || ''
+    );
 
     return base64Images;
   }
