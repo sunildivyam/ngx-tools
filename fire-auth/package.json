@@ -16,7 +16,7 @@
 	"peerDependencies": {
 		"@angular/common": "^16.1.0",
 		"@angular/core": "^16.1.0",
-		"firebaseui": "^6.0.2"
+		"firebaseui": "^6.1.0"
 	},
 	"dependencies": {
 		"tslib": "^2.3.0"

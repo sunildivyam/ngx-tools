@@ -31,11 +31,13 @@
     "@angular/core": "^16.1.0",
     "openai": "^3.3.0",
     "xml-js": "^1.6.11",
+    "compressorjs": "^1.2.1",
     "@annuadvent/ngx-core": "^1.0.3",
     "@annuadvent/ngx-common-ui": "^1.0.3",
     "firebase": "^9.23.0",
-    "compressorjs": "^1.2.1",
-    "firebaseui": "^6.0.2"
+    "firebaseui": "^6.1.0",
+    "firebase-admin": "^11.11.1",
+    "firebase-functions": "^4.8.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
