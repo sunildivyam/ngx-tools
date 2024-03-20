@@ -22,21 +22,26 @@ import {
   deleteProfile,
   updateProfile,
 } from '../controllers/profile.controller';
-import { authenticated, inAdminRole } from '../middleware';
+import { authenticatedGuard, adminGuard } from '../middleware';
 
 export const usersRouter = express.Router();
 
 // USERS
 // Gets Users by identifiers. Pass identifirs to req.body
-usersRouter.post('', getUsers);
+usersRouter.post('', authenticatedGuard, adminGuard, getUsers);
 
 // Gets paginated list of users.
-usersRouter.get('/list/:pageSize/:nextPageToken', authenticated, listUsers);
+usersRouter.get(
+  '/list/:pageSize/:nextPageToken',
+  authenticatedGuard,
+  adminGuard,
+  listUsers
+);
 
 // USER
 
 // Get user by Id
-usersRouter.get('/uid/:uid', authenticated, inAdminRole, getUserById);
+usersRouter.get('/uid/:uid', authenticatedGuard, adminGuard, getUserById);
 
 // Post | disable user
 usersRouter.post('/disable/:uid', disableUser);

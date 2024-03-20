@@ -6,7 +6,7 @@
 import { auth } from 'firebase-admin';
 import { initFireApp } from '../../common/services/common.service';
 
-export const authenticated = async (req, res, next) => {
+export const authenticatedGuard = async (req, res, next) => {
   if (
     (!req.headers.authorization ||
       !req.headers.authorization.startsWith('Bearer ')) &&

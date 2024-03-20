@@ -1,2 +1,3 @@
-export * from './authenticated';
-export * from './in-admin-role';
+export * from './authenticated-guard';
+export * from './admin-guard';
+export * from './author-guard';

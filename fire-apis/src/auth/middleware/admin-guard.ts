@@ -1,4 +1,4 @@
-export const inAdminRole = async (req, res, next) => {
+export const adminGuard = async (req, res, next) => {
   const currentUser = req.currentUser;
 
   if (currentUser && currentUser.admin) {
