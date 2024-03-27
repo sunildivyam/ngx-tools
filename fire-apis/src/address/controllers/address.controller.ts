@@ -1,7 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import { firestore } from 'firebase-admin';
 
-import { initFireApp } from '../../common/services/common.service';
+import {
+  fromDbFormat,
+  initFireApp,
+  toDbFormat,
+} from '../../common/services/common.service';
 import { Address } from '../classes/address.class';
 
 /**
@@ -30,15 +34,7 @@ export const getAddresses = async (
   try {
     const db = firestore();
     const snap = await db.collection('addresses').where('uid', '==', uid).get();
-    const addresses = snap.docs.map(
-      (doc) =>
-        new Address({
-          ...doc.data(),
-          id: doc.id,
-          updateTime: doc.updateTime,
-          createTime: doc.createTime,
-        })
-    );
+    const addresses = snap.docs.map((doc) => new Address(fromDbFormat(doc)));
 
     res.status(200).send(addresses);
   } catch (error) {
@@ -73,9 +69,7 @@ export const addAddress = async (
 
   try {
     const db = firestore();
-    const snap = await db
-      .collection('addresses')
-      .add(addressToAdd.toDbFormat());
+    const snap = await db.collection('addresses').add(toDbFormat(addressToAdd));
 
     res.status(200).send(snap);
   } catch (error) {
@@ -114,7 +108,7 @@ export const updateAddress = async (
     const snap = await db
       .collection('addresses')
       .doc(addressId)
-      .update(addressToUpdate.toDbFormat() as any);
+      .update(toDbFormat(addressToUpdate) as any);
 
     res.status(200).send({ ...addressToUpdate, updateTime: snap.writeTime });
   } catch (error) {

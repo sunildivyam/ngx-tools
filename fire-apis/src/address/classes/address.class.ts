@@ -37,14 +37,7 @@ export class Address {
     this.phoneNumber = data?.phoneNumber || '';
     this.deliveryInstruction =
       data?.deliveryInstruction || new DeliveryInstruction();
-  }
-
-  public toDbFormat(): Address {
-    const dbFormat = JSON.parse(JSON.stringify({ ...this }));
-    delete dbFormat.id;
-    delete dbFormat.createTime;
-    delete dbFormat.updateTime;
-
-    return dbFormat;
+    this.createTime = data?.createTime || '';
+    this.updateTime = data?.updateTime || '';
   }
 }

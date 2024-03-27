@@ -1,8 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
 import { auth, firestore } from 'firebase-admin';
 
-import { initFireApp } from '../../common/services/common.service';
+import {
+  fromDbFormat,
+  initFireApp,
+  toDbFormat,
+} from '../../common/services/common.service';
 import { AuthErrorCodes } from 'firebase/auth';
+import { Profile } from '../classes/profile.class';
 
 /**
  * POST
@@ -22,7 +27,9 @@ export const getProfile = async (
 
   try {
     const result = await db.collection('user-profiles').doc(uid).get();
-    res.status(200).send({ id: result.id, ...result.data() });
+    const profile = new Profile(fromDbFormat(result));
+
+    res.status(200).send(profile);
   } catch (error) {
     if (error.code === AuthErrorCodes.USER_DELETED) {
       res.status(404).send(error);
@@ -46,7 +53,7 @@ export const addProfile = async (
   initFireApp();
 
   const uid = req.params.uid;
-  const profileData = req.body;
+  const profileData = new Profile(req.body);
   const fAuth = auth();
   const db = firestore();
 
@@ -54,14 +61,11 @@ export const addProfile = async (
     // check if user exists
     const user = await fAuth.getUser(uid);
 
-    // delete id from profile data if it has.
-    delete profileData.id;
-
     // Add profile for the uid
     const result = await db
       .collection('user-profiles')
       .doc(uid)
-      .set(profileData);
+      .set(toDbFormat(profileData));
 
     res.status(200).send(result);
   } catch (error) {
@@ -87,7 +91,7 @@ export const updateProfile = async (
   initFireApp();
 
   const uid = req.params.uid;
-  const profileData = req.body;
+  const profileData = new Profile(req.body);
   const fAuth = auth();
   const db = firestore();
 
@@ -95,14 +99,11 @@ export const updateProfile = async (
     // check if user exists
     await fAuth.getUser(uid);
 
-    // delete id from profile data if it has.
-    delete profileData.id;
-
     // update profile for the uid
     const result = await db
       .collection('user-profiles')
       .doc(uid)
-      .update(profileData);
+      .update(toDbFormat(profileData));
 
     res.status(200).send(result);
   } catch (error) {

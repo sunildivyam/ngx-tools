@@ -34,7 +34,7 @@
     "compressorjs": "^1.2.1",
     "@annuadvent/ngx-core": "^1.0.3",
     "@annuadvent/ngx-common-ui": "^1.0.3",
-    "firebase": "^10.9.0",
+    "firebase": "^9.23.0",
     "firebaseui": "^6.1.0",
     "firebase-admin": "^12.0.0",
     "firebase-functions": "^4.8.1"

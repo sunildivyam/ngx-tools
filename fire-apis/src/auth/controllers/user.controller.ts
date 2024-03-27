@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { auth } from 'firebase-admin';
-import { initFireApp } from '../../common/services/common.service';
+import { initFireApp, mergeUnique } from '../../common/services/common.service';
 import { CreateRequest, UpdateRequest } from 'firebase-admin/auth';
 import { AuthErrorCodes } from 'firebase/auth';
 
@@ -252,13 +252,7 @@ export const getRoles = async (
 
   try {
     const result = await fAuth.getUser(uid);
-
-    // TODO: Update customClaims to have a key roles: ['role1', 'role2, etc]
-    const roles =
-      Object.keys(result.customClaims).filter(
-        (key) => result.customClaims[key] === true
-      ) || [];
-
+    const roles = result.customClaims?.roles || [];
     res.status(200).send(roles);
   } catch (error) {
     if (error.code === AuthErrorCodes.USER_DELETED) {
@@ -281,23 +275,30 @@ export const addRoles = async (
   next: NextFunction
 ) => {
   const uid = req.params.uid;
-  const roles = req.body;
+  const roles = req.body as Array<string>;
+
+  if (!(roles instanceof Array)) {
+    res.status(400).send({
+      code: 'Bad Request',
+      message: 'Roles must be an array of string',
+    });
+    return;
+  }
 
   initFireApp();
   const fAuth = auth();
 
   try {
-    // TODO: Update customClaims to have a key roles: ['role1', 'role2, etc]
-
     const user = await fAuth.getUser(uid);
+    const customClaims = user.customClaims || {};
 
-    const customClaims = { ...user.customClaims };
+    customClaims.roles = mergeUnique(customClaims.roles || [], roles);
+    await fAuth.setCustomUserClaims(uid, customClaims);
 
-    roles?.forEach((role) => (customClaims[role] = true));
-
-    const result = await fAuth.setCustomUserClaims(uid, customClaims);
-
-    res.status(200).send(result);
+    res.status(200).send({
+      success: true,
+      roles: customClaims.roles,
+    });
   } catch (error) {
     if (error.code === AuthErrorCodes.USER_DELETED) {
       res.status(404).send(error);
@@ -319,22 +320,32 @@ export const deleteRoles = async (
   next: NextFunction
 ) => {
   const uid = req.params.uid;
-  const roles = req.body;
+  const roles = req.body as Array<string>;
+
+  if (!(roles instanceof Array)) {
+    res.status(400).send({
+      code: 'Bad Request',
+      message: 'Roles must be an array of string',
+    });
+    return;
+  }
 
   initFireApp();
   const fAuth = auth();
 
   try {
-    // TODO: Update customClaims to have a key roles: ['role1', 'role2, etc]
     const user = await fAuth.getUser(uid);
+    const customClaims = user.customClaims || {};
 
-    const customClaims = { ...user.customClaims };
+    customClaims.roles =
+      customClaims.roles?.filter((role) => !roles.includes(role)) || [];
 
-    roles?.forEach((role) => (customClaims[role] = false));
+    await fAuth.setCustomUserClaims(uid, customClaims);
 
-    const result = await fAuth.setCustomUserClaims(uid, customClaims);
-
-    res.status(200).send(result);
+    res.status(200).send({
+      success: true,
+      roles: customClaims.roles,
+    });
   } catch (error) {
     if (error.code === AuthErrorCodes.USER_DELETED) {
       res.status(404).send(error);
