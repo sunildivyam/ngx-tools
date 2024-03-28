@@ -71,7 +71,7 @@ export const addAddress = async (
     const db = firestore();
     const snap = await db.collection('addresses').add(toDbFormat(addressToAdd));
 
-    res.status(200).send(snap);
+    res.status(200).send(fromDbFormat(snap));
   } catch (error) {
     res.status(500).send(error);
   }
@@ -91,7 +91,7 @@ export const updateAddress = async (
   initFireApp();
   // get logged in user
   const uid = req['currentUser'].uid;
-  const addressId = req.params.id;
+  const id = req.params.id;
 
   const addressToUpdate = new Address(req.body);
 
@@ -107,10 +107,12 @@ export const updateAddress = async (
     const db = firestore();
     const snap = await db
       .collection('addresses')
-      .doc(addressId)
+      .doc(id)
       .update(toDbFormat(addressToUpdate) as any);
 
-    res.status(200).send({ ...addressToUpdate, updateTime: snap.writeTime });
+    res
+      .status(200)
+      .send({ ...addressToUpdate, id, updateTime: snap.writeTime });
   } catch (error) {
     res.status(500).send(error);
   }
