@@ -6,7 +6,7 @@ import {
   initFireApp,
   toDbFormat,
 } from '../../common/services/common.service';
-import { Address } from '../classes/address.class';
+import { Address } from '@annuadvent/ngx-core/helpers-ecommerce';
 
 /**
  * GET

@@ -7,8 +7,7 @@ import {
   toDbFormat,
 } from '../../common/services/common.service';
 import { isPincodeValid } from '../services/validate.service';
-import { Pincode } from '../classes/pincode.class';
-import { collection } from 'firebase/firestore';
+import { Pincode } from '@annuadvent/ngx-core/helpers-ecommerce';
 
 /**
  * GET

@@ -7,7 +7,7 @@ import {
   toDbFormat,
 } from '../../common/services/common.service';
 import { AuthErrorCodes } from 'firebase/auth';
-import { Profile } from '../classes/profile.class';
+import { Profile } from '@annuadvent/ngx-core/helpers-auth';
 
 /**
  * POST

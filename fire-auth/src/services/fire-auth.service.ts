@@ -1,9 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import {
-  Inject,
-  Injectable,
-  PLATFORM_ID,
-} from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import {
   getAuth,
   User,
@@ -11,15 +7,12 @@ import {
   onAuthStateChanged,
   getIdTokenResult,
 } from 'firebase/auth';
-import {
-  Observable,
-  BehaviorSubject,
-} from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { FireCommonService } from '@annuadvent/ngx-tools/fire-common';
 import { FIREBASE_AUTH_ROLES } from '../constants/fire-auth.constants';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FireAuthService {
   auth: Auth;
@@ -27,14 +20,14 @@ export class FireAuthService {
 
   constructor(
     private fireCommonService: FireCommonService,
-    @Inject(PLATFORM_ID) private platformId,
+    @Inject(PLATFORM_ID) private platformId
   ) {
     this.auth = this.getFirebaseAuth();
     onAuthStateChanged(this.getFirebaseAuth(), (user: User) => {
-      this.authState.next(user)
+      this.authState.next(user);
     });
 
-    this.authState.subscribe(user => {
+    this.authState.subscribe((user) => {
       if (typeof user !== 'undefined') {
         this.setLoggedInToLocalStorage(user);
       }
@@ -61,7 +54,7 @@ export class FireAuthService {
   public getCurrentUserId(): string {
     const currentUser = this.getCurrentUser();
 
-    return currentUser && currentUser.uid || '';
+    return (currentUser && currentUser.uid) || '';
   }
 
   public isLoggedIn(): boolean {
@@ -84,7 +77,7 @@ export class FireAuthService {
     if (isPlatformBrowser(this.platformId)) {
       const currentUser = window.localStorage.getItem('currentUser');
 
-      return currentUser ? JSON.parse(currentUser) as User : null;
+      return currentUser ? (JSON.parse(currentUser) as User) : null;
     } else {
       return null;
     }
@@ -92,14 +85,22 @@ export class FireAuthService {
 
   public setLoggedInToLocalStorage(user: User): void {
     if (isPlatformBrowser(this.platformId)) {
-      window.localStorage.setItem('currentUser', '' + user ? JSON.stringify(user) : '');
+      window.localStorage.setItem(
+        'currentUser',
+        '' + user ? JSON.stringify(user) : ''
+      );
       if (user) {
-        user.getIdToken().then(token => {
-          // TODO: if cookie already exists
-          if (token) {
-            window.document.cookie = 'Authorization=Bearer ' + token;
+        user.getIdToken().then(
+          (token) => {
+            // TODO: if cookie already exists
+            if (token) {
+              window.document.cookie = 'Authorization=Bearer ' + token;
+            }
+          },
+          (error) => {
+            console.log(error?.message);
           }
-        })
+        );
       } else {
         window.document.cookie = '';
       }
@@ -116,11 +117,11 @@ export class FireAuthService {
     const claims = idTokenResult && idTokenResult.claims;
     const claimsArray: Array<string> = [];
     if (claims) {
-      Object.keys(FIREBASE_AUTH_ROLES).forEach(key => {
+      Object.keys(FIREBASE_AUTH_ROLES).forEach((key) => {
         if (claims[FIREBASE_AUTH_ROLES[key]]) {
           claimsArray.push(FIREBASE_AUTH_ROLES[key]);
         }
-      })
+      });
     }
 
     return claimsArray;
