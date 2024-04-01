@@ -4,7 +4,7 @@ import { auth, firestore } from 'firebase-admin';
 import {
   fromDbFormat,
   initFireApp,
-  toDbFormat,
+  toDbFormat
 } from '../../common/services/common.service';
 import { AuthErrorCodes } from 'firebase/auth';
 import { Profile } from '@annuadvent/ngx-core/helpers-auth';
@@ -136,7 +136,7 @@ export const deleteProfile = async (
     // check if user exists
     await fAuth.getUser(uid);
 
-    // update profile for the uid
+    // Delete profile for the uid
     const result = await db.collection('user-profiles').doc(uid).delete();
 
     res.status(200).send(result);
