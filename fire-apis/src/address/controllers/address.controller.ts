@@ -4,7 +4,7 @@ import { firestore } from 'firebase-admin';
 import {
   fromDbFormat,
   initFireApp,
-  toDbFormat,
+  toDbFormat
 } from '../../common/services/common.service';
 import { Address } from '@annuadvent/ngx-core/helpers-ecommerce';
 
@@ -27,7 +27,7 @@ export const getAddresses = async (
     res.status(403).send({
       code: 'Unathourized',
       message:
-        'You are not authorized to perform this operation. Please sign in with valid user credentials.',
+        'You are not authorized to perform this operation. Please sign in with valid user credentials.'
     });
   }
 
@@ -58,18 +58,22 @@ export const addAddress = async (
   const uid = req['currentUser'].uid;
 
   const addressToAdd = new Address(req.body);
+  addressToAdd.uid = uid;
 
   if (!uid || uid !== addressToAdd.uid) {
     res.status(403).send({
       code: 'Unathourized',
       message:
-        'You are not authorized to perform this operation. Please sign in with valid user credentials.',
+        'You are not authorized to perform this operation. Please sign in with valid user credentials.'
     });
   }
 
   try {
     const db = firestore();
-    const snap = await db.collection('addresses').add(toDbFormat(addressToAdd));
+    const snapn = await db
+      .collection('addresses')
+      .add(toDbFormat(addressToAdd));
+    const snap = await snapn.get();
 
     res.status(200).send(fromDbFormat(snap));
   } catch (error) {
@@ -99,7 +103,7 @@ export const updateAddress = async (
     res.status(403).send({
       code: 'Unathourized',
       message:
-        'You are not authorized to perform this operation. Please sign in with valid user credentials.',
+        'You are not authorized to perform this operation. Please sign in with valid user credentials.'
     });
   }
 
@@ -138,7 +142,7 @@ export const deleteAddress = async (
     res.status(403).send({
       code: 'Unathourized',
       message:
-        'You are not authorized to perform this operation. Please sign in with valid user credentials.',
+        'You are not authorized to perform this operation. Please sign in with valid user credentials.'
     });
 
     return;
@@ -156,7 +160,7 @@ export const deleteAddress = async (
       res.status(403).send({
         code: 'Unathourized',
         message:
-          'You are not authorized to perform this operation. Please sign in with valid user credentials.',
+          'You are not authorized to perform this operation. Please sign in with valid user credentials.'
       });
       return;
     }
