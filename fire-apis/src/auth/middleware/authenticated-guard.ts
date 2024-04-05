@@ -20,7 +20,7 @@ export const authenticatedGuard = async (req, res, next) => {
       message: `No Firebase ID token was passed as a Bearer token in the Authorization header.
       Make sure you authorize your request by providing the following HTTP header:
       Authorization: Bearer <Firebase ID Token>
-      or by passing a "Authorization" cookie.`,
+      or by passing a "Authorization" cookie.`
     });
 
     return;
@@ -44,7 +44,7 @@ export const authenticatedGuard = async (req, res, next) => {
       message: `No Firebase ID token was passed as a Bearer token in the Authorization header.
       Make sure you authorize your request by providing the following HTTP header:
       Authorization: Bearer <Firebase ID Token>
-      or by passing a "Authorization" cookie.`,
+      or by passing a "Authorization" cookie.`
     });
 
     return;
@@ -53,7 +53,7 @@ export const authenticatedGuard = async (req, res, next) => {
   const app = initFireApp();
 
   try {
-    const decodedIdToken = await auth().verifyIdToken(idToken);
+    const decodedIdToken = await auth().verifyIdToken(idToken, true);
 
     req.currentUser = decodedIdToken;
     next();
@@ -61,7 +61,7 @@ export const authenticatedGuard = async (req, res, next) => {
     res.status(403).send({
       code: 'unauthorized',
       message: 'Error while verifying ID token',
-      error,
+      error: JSON.stringify(error)
     });
 
     return;

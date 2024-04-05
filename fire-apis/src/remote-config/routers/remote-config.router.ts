@@ -1,6 +1,9 @@
 import * as express from 'express';
 import { authenticatedGuard, adminGuard } from '../../auth/middleware';
-import { getRemoteConfig } from '../controllers/remote-config.controller';
+import {
+  getProfileParams,
+  getRemoteConfig
+} from '../controllers/remote-config.controller';
 
 export const remoteConfigRouter = express.Router();
 
@@ -8,3 +11,6 @@ export const remoteConfigRouter = express.Router();
 
 // Gets remote config.
 remoteConfigRouter.get('', getRemoteConfig);
+
+// Gets Profile config.
+remoteConfigRouter.get('/profile/params', getProfileParams);

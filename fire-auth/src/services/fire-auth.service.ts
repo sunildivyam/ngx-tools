@@ -6,13 +6,15 @@ import {
   Auth,
   onAuthStateChanged,
   getIdTokenResult,
+  UserInfo,
+  UserCredential
 } from 'firebase/auth';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { FireCommonService } from '@annuadvent/ngx-tools/fire-common';
 import { FIREBASE_AUTH_ROLES } from '../constants/fire-auth.constants';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class FireAuthService {
   auth: Auth;
@@ -23,14 +25,10 @@ export class FireAuthService {
     @Inject(PLATFORM_ID) private platformId
   ) {
     this.auth = this.getFirebaseAuth();
-    onAuthStateChanged(this.getFirebaseAuth(), (user: User) => {
-      this.authState.next(user);
-    });
 
-    this.authState.subscribe((user) => {
-      if (typeof user !== 'undefined') {
-        this.setLoggedInToLocalStorage(user);
-      }
+    onAuthStateChanged(this.getFirebaseAuth(), (user: any) => {
+      this.saveToLocalStorage(user, user?.accessToken || '');
+      this.authState.next(user);
     });
   }
 
@@ -48,7 +46,9 @@ export class FireAuthService {
   public getCurrentUser(): User {
     const auth = this.getFirebaseAuth();
     const currentUser = auth.currentUser;
-    return currentUser;
+    const currentUserFromLocalStorage = this.getUserFromLocalStorage();
+
+    return currentUser || currentUserFromLocalStorage;
   }
 
   public getCurrentUserId(): string {
@@ -73,37 +73,32 @@ export class FireAuthService {
     return true;
   }
 
-  public isLoggedInFromLocalStorage(): User {
+  public getUserFromLocalStorage(): User {
     if (isPlatformBrowser(this.platformId)) {
-      const currentUser = window.localStorage.getItem('currentUser');
-
-      return currentUser ? (JSON.parse(currentUser) as User) : null;
+      const user = window.localStorage.getItem('currentUser');
+      return user ? JSON.parse(user) : null;
     } else {
       return null;
     }
   }
 
-  public setLoggedInToLocalStorage(user: User): void {
+  public getIdTokenFromLocalStorage(): string {
+    if (isPlatformBrowser(this.platformId)) {
+      return window.localStorage.getItem('idToken') || '';
+    } else {
+      return '';
+    }
+  }
+
+  public saveToLocalStorage(user: User, idToken: string): void {
+    // Saves user to local storage
     if (isPlatformBrowser(this.platformId)) {
       window.localStorage.setItem(
         'currentUser',
-        '' + user ? JSON.stringify(user) : ''
+        user ? JSON.stringify(user) : ''
       );
-      if (user) {
-        user.getIdToken().then(
-          (token) => {
-            // TODO: if cookie already exists
-            if (token) {
-              window.document.cookie = 'Authorization=Bearer ' + token;
-            }
-          },
-          (error) => {
-            console.log(error?.message);
-          }
-        );
-      } else {
-        window.document.cookie = '';
-      }
+      // Saves idToken to local storage
+      window.localStorage.setItem('idToken', idToken || '');
     }
   }
 
@@ -146,7 +141,13 @@ export class FireAuthService {
   public async getAccessToken(): Promise<string> {
     const currentUser = this.getCurrentUser();
     if (currentUser) {
-      return await currentUser.getIdToken();
+      try {
+        const idToken = await currentUser.getIdToken();
+        this.saveToLocalStorage(currentUser, idToken);
+        return idToken;
+      } catch (error) {
+        return this.getIdTokenFromLocalStorage();
+      }
     } else {
       return '';
     }

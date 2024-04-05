@@ -4,14 +4,14 @@ import {
   addAddress,
   deleteAddress,
   getAddresses,
-  updateAddress,
+  updateAddress
 } from '../controllers/address.controller';
 import {
   addBulkPincodes,
   addPincode,
   deletePincode,
   getPincode,
-  updatePincode,
+  updatePincode
 } from '../controllers/pincode.controller';
 
 export const addressRouter = express.Router();

@@ -13,6 +13,9 @@ export * from './src/sitemap/routers/sitemap.router';
 // Address APIs
 export * from './src/address/routers/address.router';
 
+// Remote Config APIs
+export * from './src/remote-config/routers/remote-config.router';
+
 // CMS APIs
 
 // E-commerce APIs
