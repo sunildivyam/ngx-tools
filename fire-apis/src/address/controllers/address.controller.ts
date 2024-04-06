@@ -116,7 +116,7 @@ export const updateAddress = async (
 
     res
       .status(200)
-      .send({ ...addressToUpdate, id, updateTime: snap.writeTime });
+      .send(toDbFormat({ ...addressToUpdate, id, updateTime: snap.writeTime }));
   } catch (error) {
     res.status(500).send(error);
   }

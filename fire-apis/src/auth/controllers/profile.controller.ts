@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { auth, firestore } from 'firebase-admin';
+import { auth, firestore, remoteConfig } from 'firebase-admin';
 
 import {
   fromDbFormat,
@@ -8,6 +8,32 @@ import {
 } from '../../common/services/common.service';
 import { AuthErrorCodes } from 'firebase/auth';
 import { Profile } from '@annuadvent/ngx-core/helpers-auth';
+import { RemoteConfigTemplate } from 'firebase-admin/lib/remote-config/remote-config-api';
+
+const filterProfileForParams = async (profile: Profile): Promise<any> => {
+  if (!profile) return null;
+
+  const fConfig = remoteConfig();
+  const rConfig: RemoteConfigTemplate = await fConfig.getTemplate();
+
+  let pParams = rConfig.parameters['userProfileParams']?.defaultValue || null;
+  if (pParams) {
+    pParams = JSON.parse((pParams as any).value);
+  } else {
+    return null;
+  }
+
+  const pParamsArr = Object.keys(pParams);
+  const filteredProfile = {};
+  // Match profile params with remote profile params
+  Object.keys(profile).forEach((key) => {
+    if (pParamsArr.includes(key)) {
+      filteredProfile[key] = profile[key];
+    }
+  });
+
+  return filteredProfile;
+};
 
 /**
  * POST
@@ -27,9 +53,9 @@ export const getProfile = async (
 
   try {
     const result = await db.collection('user-profiles').doc(uid).get();
-    const profile = new Profile(fromDbFormat(result));
-
-    res.status(200).send(profile);
+    const profile = fromDbFormat(result);
+    const filteredProfile = await filterProfileForParams(profile);
+    res.status(200).send(filteredProfile);
   } catch (error) {
     if (error.code === AuthErrorCodes.USER_DELETED) {
       res.status(404).send(error);
@@ -53,7 +79,8 @@ export const addProfile = async (
   initFireApp();
 
   const uid = req.params.uid;
-  const profileData = new Profile(req.body);
+  // filter in only profile params, from remoteconfig
+  const profileData = await filterProfileForParams(req.body);
   const fAuth = auth();
   const db = firestore();
 
@@ -61,13 +88,18 @@ export const addProfile = async (
     // check if user exists
     const user = await fAuth.getUser(uid);
 
+    // TODO: Can Save to User Table (auth), all the params that belong to auth. Rest will go to user-profiles
+    // Check for changed params with user data, and save changed params only
+
     // Add profile for the uid
     const result = await db
       .collection('user-profiles')
       .doc(uid)
       .set(toDbFormat(profileData));
 
-    res.status(200).send(result);
+    res
+      .status(200)
+      .send({ ...profileData, updateTime: result.writeTime.toDate() });
   } catch (error) {
     if (error.code === AuthErrorCodes.USER_DELETED) {
       res.status(404).send(error);
@@ -91,13 +123,16 @@ export const updateProfile = async (
   initFireApp();
 
   const uid = req.params.uid;
-  const profileData = new Profile(req.body);
+  const profileData = await filterProfileForParams(req.body);
   const fAuth = auth();
   const db = firestore();
 
   try {
     // check if user exists
-    await fAuth.getUser(uid);
+    const user = await fAuth.getUser(uid);
+
+    // TODO: Can Save to User Table (auth), all the params that belong to auth. Rest will go to user-profiles
+    // Check for changed params with user data, and save changed params only
 
     // update profile for the uid
     const result = await db
@@ -105,7 +140,9 @@ export const updateProfile = async (
       .doc(uid)
       .update(toDbFormat(profileData));
 
-    res.status(200).send(result);
+    res
+      .status(200)
+      .send({ ...profileData, updateTime: result.writeTime.toDate() });
   } catch (error) {
     if (error.code === AuthErrorCodes.USER_DELETED) {
       res.status(404).send(error);

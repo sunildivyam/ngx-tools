@@ -17,7 +17,6 @@ export const listUsers = async (
   const pageSize = parseInt(req.params?.pageSize as string);
 
   if (isNaN(pageSize)) {
-    console.log('Invalid pageSize');
     res.status(400).send(`Invalid pageSize: ${req.params?.pageSize}`);
     return;
   }
