@@ -16,6 +16,11 @@ export * from './src/address/routers/address.router';
 // Remote Config APIs
 export * from './src/remote-config/routers/remote-config.router';
 
+// Categories APIs
+
+// Address APIs
+export * from './src/categories/routers/categories.router';
+
 // CMS APIs
 
 // E-commerce APIs

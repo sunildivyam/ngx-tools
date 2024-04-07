@@ -26,30 +26,3 @@ export const getRemoteConfig = async (
     res.status(500).send(error);
   }
 };
-
-/**
- * GET
- * @param req
- * @param res
- * @param next
- */
-export const getProfileParams = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  initFireApp();
-
-  try {
-    const fConfig = remoteConfig();
-    const rConfig: RemoteConfigTemplate = await fConfig.getTemplate();
-
-    let pParams = rConfig.parameters['userProfileParams']?.defaultValue || null;
-    if (pParams) {
-      pParams = (pParams as any).value;
-    }
-    res.status(200).send(pParams);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-};
