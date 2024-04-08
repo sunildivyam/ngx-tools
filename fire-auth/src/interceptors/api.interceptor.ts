@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, Optional } from '@angular/core';
 import {
   HttpRequest,
   HttpHandler,
@@ -23,11 +23,13 @@ export class ApiInterceptor implements HttpInterceptor {
     request: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
-    if (request.url.includes(`/api/`)) {
+    if (request.url.startsWith(`/api/`)) {
       const apiKey = (this.appConfigService.firebase as FirebaseConfig)?.app
         ?.apiKey;
 
       let clonedRequest = request.clone({
+        // Convert relative to absolute URLs, as SSR does not add hostname to the request URL automatically.
+        url: `${this.appConfigService.config.apiBaseUrl}${request.url}`,
         setParams: { key: apiKey }
       });
 

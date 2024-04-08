@@ -147,3 +147,30 @@ export const deleteCategory = async (
     res.status(500).send(error);
   }
 };
+
+/**
+ * GET
+ * @param req
+ * @param res
+ * @param next
+ */
+export const listLiveCategories = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  initFireApp();
+
+  try {
+    const db = firestore();
+    const snap = await db
+      .collection('categories')
+      .where('isLive', '==', true)
+      .get();
+    const categories = snap.docs.map((doc) => new Category(fromDbFormat(doc)));
+
+    res.status(200).send(categories);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};

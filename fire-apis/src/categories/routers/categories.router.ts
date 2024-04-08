@@ -4,6 +4,7 @@ import {
   addCategory,
   deleteCategory,
   getCategories,
+  listLiveCategories,
   updateCategory
 } from '../controllers/categories.controller';
 
@@ -22,3 +23,7 @@ categoriesRouter.post('/update/:id', authenticatedGuard, updateCategory);
 
 // delete Category
 categoriesRouter.post('/delete/:id', authenticatedGuard, deleteCategory);
+
+// Query kind of routes
+// List Categories (Live Only)
+categoriesRouter.get('/list', listLiveCategories);
