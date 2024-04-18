@@ -326,4 +326,22 @@ export class FireStorageImageService {
       throw error;
     }
   }
+
+  public async deleteImageByPath(
+    fullPathWithFileName: string
+  ): Promise<string> {
+    const fireStorage = getStorage(
+      this.fireCommonService.initOrGetFirebaseApp(),
+      this.fireCommonService.firebaseConfig.app.storageBucket
+    );
+
+    const fileRef = ref(fireStorage, fullPathWithFileName);
+
+    try {
+      await deleteObject(fileRef);
+      return fullPathWithFileName;
+    } catch (error: any) {
+      throw error;
+    }
+  }
 }

@@ -7,9 +7,8 @@ export const getFireStorageImage = async (
   res: Response,
   next: NextFunction
 ) => {
-  const app = initFireApp();
-
   try {
+    const app = initFireApp();
     const fStorage = storage();
     const bucket = fStorage.bucket(); // Get the default Firebase Storage bucket
     const file = bucket.file(fullPath);

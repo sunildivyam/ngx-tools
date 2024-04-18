@@ -16,7 +16,7 @@ export const initFireApp = (): App => {
       // Initialize app in dev env only. NOTE: dev env needs service.json file to detect app
       return initializeApp({
         credential: credential.cert(env.FIREBASE_SERVICE_ACCOUNT),
-        storageBucket: firebaseConfig?.storageBucket || '',
+        storageBucket: firebaseConfig?.storageBucket || ''
       });
     } else {
       // Initialize app in firebase env, like firebase functions or google app engine
@@ -58,6 +58,6 @@ export const fromDbFormat = (doc: any): any => {
     ...doc.data(),
     id: doc.id,
     createTime: doc.createTime.toDate(),
-    updateTime: doc.updateTime.toDate(),
+    updateTime: doc.updateTime.toDate()
   };
 };

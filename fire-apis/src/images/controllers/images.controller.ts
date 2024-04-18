@@ -50,7 +50,7 @@ export const getProductImage = async (
   next: NextFunction
 ) => {
   const id = req.params.id;
-  const fileName = req.params.fileName;
+  const fileName = req.query.fileName;
 
   const fullPath = `${await getRemoteConfigParamValue(
     GlobalConfigParamsEnum.productsImagePath
@@ -70,10 +70,10 @@ export const getCategoryImage = async (
   next: NextFunction
 ) => {
   const id = req.params.id;
-  const fileName = req.params.fileName;
+  const fileName = req.query.fileName;
 
   const fullPath = `${await getRemoteConfigParamValue(
-    GlobalConfigParamsEnum.productsImagePath
+    GlobalConfigParamsEnum.categoriesImagePath
   )}/${id}/${fileName}`;
   getFireStorageImage(fullPath, res, next);
 };
