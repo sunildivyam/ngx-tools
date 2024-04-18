@@ -9,19 +9,15 @@ import {
 import { AuthErrorCodes } from 'firebase/auth';
 import { Profile } from '@annuadvent/ngx-core/helpers-auth';
 import { RemoteConfigTemplate } from 'firebase-admin/lib/remote-config/remote-config-api';
+import { getRemoteConfigParamValue } from '../../common/helpers/remote-config-helper';
+import { GlobalConfigParamsEnum } from '@annuadvent/ngx-core/global-config';
 
 const filterProfileForParams = async (profile: Profile): Promise<any> => {
   if (!profile) return null;
 
-  const fConfig = remoteConfig();
-  const rConfig: RemoteConfigTemplate = await fConfig.getTemplate();
-
-  let pParams = rConfig.parameters['userProfileParams']?.defaultValue || null;
-  if (pParams) {
-    pParams = JSON.parse((pParams as any).value);
-  } else {
-    return null;
-  }
+  let pParams = await getRemoteConfigParamValue(
+    GlobalConfigParamsEnum.userProfileParams
+  );
 
   const pParamsArr = Object.keys(pParams);
   const filteredProfile = {};
@@ -96,13 +92,11 @@ export const addProfile = async (
       .doc(profileData.id)
       .set(toDbFormat(profileData));
 
-    res
-      .status(200)
-      .send({
-        ...profileData,
-        createTime: result.writeTime.toDate(),
-        updateTime: result.writeTime.toDate()
-      });
+    res.status(200).send({
+      ...profileData,
+      createTime: result.writeTime.toDate(),
+      updateTime: result.writeTime.toDate()
+    });
   } catch (error) {
     if (error.code === AuthErrorCodes.USER_DELETED) {
       res.status(404).send(error);

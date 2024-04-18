@@ -10,11 +10,11 @@ import {
   deleteObject,
   list,
   ListOptions,
-  ListResult,
+  ListResult
 } from 'firebase/storage';
 import {
   ImageFileInfo,
-  ImageFileInfoList,
+  ImageFileInfoList
 } from '../interfaces/fire-storage-image.interface';
 
 @Injectable({
@@ -23,10 +23,9 @@ import {
 export class FireStorageImageService {
   public baseStorageUrl: string = '';
 
-  constructor(
-    private fireCommonService: FireCommonService,
-  ) {
-    this.baseStorageUrl = this.fireCommonService.firebaseConfig.storage.baseStorageUrl;
+  constructor(private fireCommonService: FireCommonService) {
+    this.baseStorageUrl =
+      this.fireCommonService.firebaseConfig.storage.baseStorageUrl;
   }
 
   private buildImageUrl(fullPathWithFileName: string, userId: string): string {
@@ -38,14 +37,16 @@ export class FireStorageImageService {
   }
 
   public getUploadImageValidationText(): string {
-    const { maxKBs, maxWidth, maxHeight, minWidth, minHeight } = this.fireCommonService.firebaseConfig.storage.imageDimensions;
+    const { maxKBs, maxWidth, maxHeight, minWidth, minHeight } =
+      this.fireCommonService.firebaseConfig.storage.imageDimensions;
     return `Allowed width is ${minWidth}px to ${maxWidth}px, height is ${minHeight}px to ${maxHeight}px and size is up to ${maxKBs}KBs`;
   }
 
   public async validateImage(imageData: any): Promise<string> {
     if (!imageData) return 'Empty Image';
 
-    const { maxKBs } = this.fireCommonService.firebaseConfig.storage.imageDimensions;
+    const { maxKBs } =
+      this.fireCommonService.firebaseConfig.storage.imageDimensions;
 
     // Type Check
     if (imageData.type.indexOf('image/') < 0) {
@@ -136,7 +137,6 @@ export class FireStorageImageService {
     }
 
     try {
-
       if (isBas64) {
         imageData = await this.compressBase64ToJpeg(imageData);
       }
@@ -146,7 +146,7 @@ export class FireStorageImageService {
       const imageFileInfo: ImageFileInfo = {
         name: uploadResult.ref.name,
         fullPath: uploadResult.ref.fullPath,
-        downloadUrl,
+        downloadUrl
       };
 
       return imageFileInfo;
@@ -194,10 +194,10 @@ export class FireStorageImageService {
     }
   }
 
-  public async getImagesList(    
+  public async getImagesList(
     userId: string = '',
     pageSize: number = 10,
-    nextPageToken: any = null,
+    nextPageToken: any = null
   ): Promise<ImageFileInfoList> {
     const fireStorage = getStorage(
       this.fireCommonService.initOrGetFirebaseApp(),
@@ -215,9 +215,9 @@ export class FireStorageImageService {
         imageFiles: imageList.items.map((img) => ({
           name: img.name,
           fullPath: img.fullPath,
-          downloadUrl: '',
+          downloadUrl: ''
         })),
-        nextPageToken: imageList.nextPageToken,
+        nextPageToken: imageList.nextPageToken
       };
 
       return imageFileInfoList;
@@ -274,8 +274,8 @@ export class FireStorageImageService {
         },
         error: (error: any) => {
           reject(`Image compression error:${error.message}`);
-        },
-      }
+        }
+      };
       // Create an image compressor instance
       new Compressor(blob, compressOptions);
     });
@@ -291,5 +291,39 @@ export class FireStorageImageService {
     }
 
     return new Blob([uint8Array], { type });
+  }
+
+  public async uploadImageByPath(
+    fullPathWithFileName: string,
+    imageData: any,
+    overWrite: boolean = false
+  ): Promise<boolean> {
+    const fireStorage = getStorage(
+      this.fireCommonService.initOrGetFirebaseApp(),
+      this.fireCommonService.firebaseConfig.app.storageBucket
+    );
+    const fileRef = ref(fireStorage, fullPathWithFileName);
+
+    // If exists
+    if (!overWrite) {
+      try {
+        const isExists = await getDownloadURL(fileRef);
+        if (isExists) {
+          throw new Error('Image already exists -' + fullPathWithFileName);
+        }
+      } catch (error: any) {
+        if (error.code !== 'storage/object-not-found') {
+          throw error;
+        }
+      }
+    }
+
+    try {
+      await uploadBytes(fileRef, imageData);
+
+      return true;
+    } catch (error: any) {
+      throw error;
+    }
   }
 }

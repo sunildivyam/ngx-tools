@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import { storage } from 'firebase-admin';
-import { initFireApp } from '../../common/services/common.service';
+import { getFireStorageImage } from '../images-helpers';
+import { getRemoteConfigParamValue } from '../../common/helpers/remote-config-helper';
+import { GlobalConfigParamsEnum } from '@annuadvent/ngx-core/global-config';
 
 /**
  * GET
@@ -13,34 +14,85 @@ export const getImage = async (
   res: Response,
   next: NextFunction
 ) => {
-  const app = initFireApp();
+  const iid = req.query.iid as string; // Assuming the image ID is passed as a query parameter
+  getFireStorageImage(iid, res, next);
+};
 
-  try {
-    const iid = req.query.iid as string; // Assuming the image ID is passed as a query parameter
+/**
+ * get
+ * @param req
+ * @param res
+ * @param next
+ */
+export const getProfileImage = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const uid = req.params.uid;
+  const fileName = req.query.fileName;
 
-    if (!iid) {
-      res.status(400).send('Image Id can not be empty.');
-      return;
-    }
+  const fullPath = `${await getRemoteConfigParamValue(
+    GlobalConfigParamsEnum.userImagePath
+  )}/${uid}/${fileName}`;
+  getFireStorageImage(fullPath, res, next);
+};
 
-    const fStorage = storage();
-    const bucket = fStorage.bucket(); // Get the default Firebase Storage bucket
-    const file = bucket.file(iid);
+/**
+ * get
+ * @param req
+ * @param res
+ * @param next
+ */
+export const getProductImage = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const id = req.params.id;
+  const fileName = req.params.fileName;
 
-    const fileExists = await file.exists();
+  const fullPath = `${await getRemoteConfigParamValue(
+    GlobalConfigParamsEnum.productsImagePath
+  )}/${id}/${fileName}`;
+  getFireStorageImage(fullPath, res, next);
+};
 
-    if (!fileExists[0]) {
-      res.status(404).send('Image not found');
-      return;
-    }
+/**
+ * get
+ * @param req
+ * @param res
+ * @param next
+ */
+export const getCategoryImage = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const id = req.params.id;
+  const fileName = req.params.fileName;
 
-    // Set appropriate headers for the image res
-    res.set('Cache-Control', 'public, max-age=3600');
-    res.set('Content-Type', 'image/jpeg');
+  const fullPath = `${await getRemoteConfigParamValue(
+    GlobalConfigParamsEnum.productsImagePath
+  )}/${id}/${fileName}`;
+  getFireStorageImage(fullPath, res, next);
+};
 
-    // Create a readable stream from the file and pipe it to the res
-    file.createReadStream().pipe(res);
-  } catch (error) {
-    res.status(500).send(error);
-  }
+/**
+ * get
+ * @param req
+ * @param res
+ * @param next
+ */
+export const getAppImage = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const fileName = req.query.fileName;
+
+  const fullPath = `${await getRemoteConfigParamValue(
+    GlobalConfigParamsEnum.appImagePath
+  )}/${fileName}`;
+  getFireStorageImage(fullPath, res, next);
 };
