@@ -51,10 +51,12 @@ export const getProductImage = async (
 ) => {
   const id = req.params.id;
   const fileName = req.query.fileName;
+  const size = req.query.size || 'sm'; // sm | md | lg
 
   const fullPath = `${await getRemoteConfigParamValue(
     GlobalConfigParamsEnum.productsImagePath
-  )}/${id}/${fileName}`;
+  )}/${id}/${size}/${fileName}`;
+
   getFireStorageImage(fullPath, res, next);
 };
 
