@@ -6,11 +6,14 @@ import {
   getProducts,
   updateProduct
 } from '../controllers/products.controller';
-import { listLiveProducts } from '../controllers/products-queries.controller';
+import {
+  listLiveProductById,
+  listLiveProducts
+} from '../controllers/products-queries.controller';
 
 export const productsRouter = express.Router();
 
-// CATEGORIES
+// PRODUCTS
 
 // Gets Products
 productsRouter.get('', authenticatedGuard, getProducts);
@@ -27,3 +30,4 @@ productsRouter.post('/delete/:id', authenticatedGuard, deleteProduct);
 // Query kind of routes
 // List Products (Live Only)
 productsRouter.get('/list', listLiveProducts);
+productsRouter.get('/list/:id', listLiveProductById);
