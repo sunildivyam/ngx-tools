@@ -53,6 +53,7 @@ export const listLiveProducts = async (
 
   try {
     const categoryIds: string = req.query.categoryIds as string;
+    const ids: string = req.query.ids as string;
 
     const db = firestore();
     let dbQuery = null;
@@ -62,6 +63,12 @@ export const listLiveProducts = async (
         .collection('products')
         .where('isLive', '==', true)
         .where('categories', 'array-contains-any', categoryIds.split(','))
+        .get();
+    } else if (ids) {
+      dbQuery = db
+        .collection('products')
+        .where(firestore.FieldPath.documentId(), 'in', ids.split(','))
+        .where('isLive', '==', true)
         .get();
     } else {
       dbQuery = db.collection('products').where('isLive', '==', true).get();
