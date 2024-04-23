@@ -18,8 +18,14 @@ export * from './src/remote-config/routers/remote-config.router';
 
 // Categories APIs
 
-// Address APIs
+// Categories APIs
 export * from './src/categories/routers/categories.router';
+
+// Cart APIs
+export * from './src/cart/routers/cart.router';
+
+// Wishlist APIs
+export * from './src/wishlist/routers/wishlist.router';
 
 // CMS APIs
 
