@@ -344,4 +344,36 @@ export class FireStorageImageService {
       throw error;
     }
   }
+
+  public async getImagesListByPath(
+    sourcePath: string,
+    pageSize: number = 100,
+    nextPageToken: any = null
+  ): Promise<ImageFileInfoList> {
+    const fireStorage = getStorage(
+      this.fireCommonService.initOrGetFirebaseApp(),
+      this.fireCommonService.firebaseConfig.app.storageBucket
+    );
+
+    const listRef = ref(fireStorage, sourcePath);
+
+    try {
+      const listOptions: ListOptions = { maxResults: pageSize };
+      if (nextPageToken) listOptions.pageToken = nextPageToken;
+
+      const imageList: ListResult = await list(listRef, listOptions);
+      const imageFileInfoList: ImageFileInfoList = {
+        imageFiles: imageList.items.map((img) => ({
+          name: img.name,
+          fullPath: img.fullPath,
+          downloadUrl: ''
+        })),
+        nextPageToken: imageList.nextPageToken
+      };
+
+      return imageFileInfoList;
+    } catch (error: any) {
+      throw error;
+    }
+  }
 }
