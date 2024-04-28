@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { initFireApp } from '../common/services/common.service';
-import { storage } from 'firebase-admin';
+import * as admin from 'firebase-admin';
 
 export const getFireStorageImage = async (
   fullPath: string, // Folder path including filename
@@ -9,7 +9,7 @@ export const getFireStorageImage = async (
 ) => {
   try {
     const app = initFireApp();
-    const fStorage = storage();
+    const fStorage = admin.storage();
     const bucket = fStorage.bucket(); // Get the default Firebase Storage bucket
     const file = bucket.file(fullPath);
     const metaData = await file.getMetadata();

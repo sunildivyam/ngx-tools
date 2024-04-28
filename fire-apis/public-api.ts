@@ -27,6 +27,9 @@ export * from './src/cart/routers/cart.router';
 // Wishlist APIs
 export * from './src/wishlist/routers/wishlist.router';
 
+// Products APIs
+export * from './src/products/routers/products.router';
+
 // CMS APIs
 
 // E-commerce APIs

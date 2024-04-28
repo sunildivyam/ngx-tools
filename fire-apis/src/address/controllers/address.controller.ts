@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { firestore } from 'firebase-admin';
+import * as admin from 'firebase-admin';
 
 import {
   fromDbFormat,
@@ -32,7 +32,7 @@ export const getAddresses = async (
   }
 
   try {
-    const db = firestore();
+    const db = admin.firestore();
     const snap = await db.collection('addresses').where('uid', '==', uid).get();
     const addresses = snap.docs.map((doc) => new Address(fromDbFormat(doc)));
 
@@ -69,7 +69,7 @@ export const addAddress = async (
   }
 
   try {
-    const db = firestore();
+    const db = admin.firestore();
     const snapn = await db
       .collection('addresses')
       .add(toDbFormat(addressToAdd));
@@ -108,7 +108,7 @@ export const updateAddress = async (
   }
 
   try {
-    const db = firestore();
+    const db = admin.firestore();
     const snap = await db
       .collection('addresses')
       .doc(id)
@@ -149,7 +149,7 @@ export const deleteAddress = async (
   }
 
   try {
-    const db = firestore();
+    const db = admin.firestore();
 
     const addressToDeleteSnap = await db
       .collection('addresses')

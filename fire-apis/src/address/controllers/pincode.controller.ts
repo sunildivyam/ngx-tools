@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import { firestore } from 'firebase-admin';
+import * as admin from 'firebase-admin';
 
 import {
   fromDbFormat,
   initFireApp,
-  toDbFormat,
+  toDbFormat
 } from '../../common/services/common.service';
 import { isPincodeValid } from '../services/validate.service';
 import { Pincode } from '@annuadvent/ngx-core/helpers-ecommerce';
@@ -25,7 +25,7 @@ export const getPincode = async (
   if (!isPincodeValid(id)) {
     res.status(403).send({
       code: 'Bad request',
-      message: 'Invalid Pincode',
+      message: 'Invalid Pincode'
     });
     return;
   }
@@ -33,7 +33,7 @@ export const getPincode = async (
   initFireApp();
 
   try {
-    const db = firestore();
+    const db = admin.firestore();
     const snap = await db.collection('pincodes').doc(id).get();
     const pincode = new Pincode(fromDbFormat(snap));
 
@@ -59,7 +59,7 @@ export const addPincode = async (
   if (!isPincodeValid(pincode.id) || !pincode.city || !pincode.state) {
     res.status(403).send({
       code: 'Bad request',
-      message: 'Invalid Pincode details',
+      message: 'Invalid Pincode details'
     });
     return;
   }
@@ -67,7 +67,7 @@ export const addPincode = async (
   initFireApp();
 
   try {
-    const db = firestore();
+    const db = admin.firestore();
     const snap = await db
       .collection('pincodes')
       .doc(pincode.id)
@@ -76,7 +76,7 @@ export const addPincode = async (
     res.status(200).send({
       ...pincode,
       createTime: snap.writeTime.toDate(),
-      updateTime: snap.writeTime.toDate(),
+      updateTime: snap.writeTime.toDate()
     });
   } catch (error) {
     res.status(500).send(error);
@@ -100,7 +100,7 @@ export const updatePincode = async (
   if (!isPincodeValid(id) || !pincode.city || !pincode.state) {
     res.status(403).send({
       code: 'Bad request',
-      message: 'Invalid Pincode details',
+      message: 'Invalid Pincode details'
     });
     return;
   }
@@ -108,7 +108,7 @@ export const updatePincode = async (
   initFireApp();
 
   try {
-    const db = firestore();
+    const db = admin.firestore();
     const snap = await db
       .collection('pincodes')
       .doc(id)
@@ -117,7 +117,7 @@ export const updatePincode = async (
     res.status(200).send({
       ...pincode,
       id,
-      updateTime: snap.writeTime.toDate(),
+      updateTime: snap.writeTime.toDate()
     });
   } catch (error) {
     res.status(500).send(error);
@@ -140,7 +140,7 @@ export const deletePincode = async (
   if (!isPincodeValid(id)) {
     res.status(403).send({
       code: 'Bad request',
-      message: 'Invalid Pincode.',
+      message: 'Invalid Pincode.'
     });
     return;
   }
@@ -148,11 +148,11 @@ export const deletePincode = async (
   initFireApp();
 
   try {
-    const db = firestore();
+    const db = admin.firestore();
     await db.collection('pincodes').doc(id).delete();
 
     res.status(200).send({
-      success: true,
+      success: true
     });
   } catch (error) {
     res.status(500).send(error);
@@ -173,7 +173,7 @@ export const addBulkPincodes = async (
   if (!(req.body instanceof Array) && !req.body.length) {
     res.status(403).send({
       code: 'Bad request',
-      message: 'Provide an array of Pincode object.',
+      message: 'Provide an array of Pincode object.'
     });
     return;
   }
@@ -181,14 +181,14 @@ export const addBulkPincodes = async (
   if (req.body.length > 500) {
     res.status(403).send({
       code: 'MAXIMUM_LIMIT_EXCEDDED',
-      message: 'Bulk write allows a maximum of 500 pincodes per second only.',
+      message: 'Bulk write allows a maximum of 500 pincodes per second only.'
     });
     return;
   }
 
   const failed = [];
   initFireApp();
-  const db = firestore();
+  const db = admin.firestore();
   const bulkWriter = db.bulkWriter();
   const collectionRef = db.collection('pincodes');
   let successCount = 0;
@@ -198,7 +198,7 @@ export const addBulkPincodes = async (
     if (!isPincodeValid(pincode.id) || !pincode.city || !pincode.state) {
       failed.push({
         id: pincode.id,
-        error: { code: 'Bad request', message: 'Invalid Pincode.' },
+        error: { code: 'Bad request', message: 'Invalid Pincode.' }
       });
     } else {
       bulkWriter
@@ -217,7 +217,7 @@ export const addBulkPincodes = async (
 
     res.status(200).send({
       successCount,
-      failed,
+      failed
     });
   } catch (error) {
     res.status(500).send(error);

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { firestore } from 'firebase-admin';
+import * as admin from 'firebase-admin';
 
 import {
   fromDbFormat,
@@ -23,7 +23,7 @@ export const getCart = async (
     initFireApp();
     const uid = req['currentuser'].uid;
 
-    const db = firestore();
+    const db = admin.firestore();
     const snap = await db.collection('cart').doc(uid).get();
     const cart = new Cart(fromDbFormat(snap));
 
@@ -52,7 +52,7 @@ export const addCart = async (
     const cartToAdd = new Cart(req.body);
     cartToAdd.id = uid;
 
-    const db = firestore();
+    const db = admin.firestore();
     const result = await db
       .collection('cart')
       .doc(cartToAdd.id)
@@ -88,7 +88,7 @@ export const updateCart = async (
     const cartToUpdate = new Cart(req.body);
     cartToUpdate.id = uid;
 
-    const db = firestore();
+    const db = admin.firestore();
     const snap = await db
       .collection('cart')
       .doc(id)
@@ -120,7 +120,7 @@ export const deleteCart = async (
     // get logged in user
     const uid = req['currentUser'].uid;
     const cartId = uid;
-    const db = firestore();
+    const db = admin.firestore();
 
     // Delete cart
     const snap = await db.collection('cart').doc(cartId).delete();

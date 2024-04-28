@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { firestore } from 'firebase-admin';
+import * as admin from 'firebase-admin';
 
 import {
   fromDbFormat,
@@ -24,7 +24,7 @@ export const listLiveProductById = async (
   initFireApp();
 
   try {
-    const db = firestore();
+    const db = admin.firestore();
     const snap = await db.collection('products').doc(id).get();
     const product = new Product(fromDbFormat(snap));
     if (!product.isLive) {
@@ -55,7 +55,7 @@ export const listLiveProducts = async (
     const categoryIds: string = req.query.categoryIds as string;
     const ids: string = req.query.ids as string;
 
-    const db = firestore();
+    const db = admin.firestore();
     let dbQuery = null;
 
     if (categoryIds) {
@@ -67,7 +67,7 @@ export const listLiveProducts = async (
     } else if (ids) {
       dbQuery = db
         .collection('products')
-        .where(firestore.FieldPath.documentId(), 'in', ids.split(','))
+        .where(admin.firestore.FieldPath.documentId(), 'in', ids.split(','))
         .where('isLive', '==', true)
         .get();
     } else {

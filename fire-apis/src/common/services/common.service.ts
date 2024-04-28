@@ -1,30 +1,40 @@
-import { getApps, initializeApp, App } from 'firebase-admin/app';
+import * as admin from 'firebase-admin';
 import { credential } from 'firebase-admin';
 import { env } from 'node:process';
+import { AppError } from '@annuadvent/ngx-core/app-error';
 
-export const initFireApp = (): App => {
+export const initFireApp = (): admin.app.App => {
   let firebaseConfig = null;
+  let appD: admin.app.App = null;
 
   try {
-    firebaseConfig = JSON.parse(env.FIREBASE_CONFIG!);
-  } catch (error) {}
-
-  const apps = getApps();
-
-  if (!apps || !apps.length) {
-    if (env.NODE_ENV === 'development' && env.FIREBASE_SERVICE_ACCOUNT) {
-      // Initialize app in dev env only. NOTE: dev env needs service.json file to detect app
-      return initializeApp({
-        credential: credential.cert(env.FIREBASE_SERVICE_ACCOUNT),
-        storageBucket: firebaseConfig?.storageBucket || ''
-      });
-    } else {
-      // Initialize app in firebase env, like firebase functions or google app engine
-      return initializeApp();
-    }
+    appD = admin.app();
+  } catch (error) {
+    appD = null;
   }
 
-  return apps[0];
+  try {
+    if (!appD) {
+      if (env.NODE_ENV === 'development' && env.FIREBASE_SERVICE_ACCOUNT) {
+        firebaseConfig = JSON.parse(env.FIREBASE_CONFIG!);
+        // Initialize app in dev env only. NOTE: dev env needs service.json file to detect app
+        return admin.initializeApp({
+          credential: credential.cert(env.FIREBASE_SERVICE_ACCOUNT),
+          storageBucket: firebaseConfig?.storageBucket || ''
+        });
+      } else {
+        // Initialize app in firebase env, like firebase functions or google app engine
+        firebaseConfig = JSON.parse(env.FIREBASE_CONFIG!);
+        return admin.initializeApp({
+          storageBucket: firebaseConfig?.storageBucket || ''
+        });
+      }
+    }
+
+    return appD;
+  } catch (error) {
+    throw new AppError(error);
+  }
 };
 
 export const mergeUnique = (arr1: Array<any>, arr2: Array<any>) => {

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { firestore } from 'firebase-admin';
+import * as admin from 'firebase-admin';
 
 import {
   fromDbFormat,
@@ -23,7 +23,7 @@ export const getWishlist = async (
     initFireApp();
     const uid = req['currentUser'].uid;
 
-    const db = firestore();
+    const db = admin.firestore();
     const snap = await db.collection('wishlist').doc(uid).get();
     const wishlist = new Wishlist(fromDbFormat(snap));
 
@@ -52,7 +52,7 @@ export const addWishlist = async (
     const wishlistToAdd = new Wishlist(req.body);
     wishlistToAdd.id = uid;
 
-    const db = firestore();
+    const db = admin.firestore();
     const result = await db
       .collection('wishlist')
       .doc(wishlistToAdd.id)
@@ -87,7 +87,7 @@ export const updateWishlist = async (
     const wishlistToUpdate = new Wishlist(req.body);
     wishlistToUpdate.id = uid;
 
-    const db = firestore();
+    const db = admin.firestore();
     const snap = await db
       .collection('wishlist')
       .doc(uid)
@@ -119,7 +119,7 @@ export const deleteWishlist = async (
     // get logged in user
     const uid = req['currentUser'].uid;
     const wishlistId = uid;
-    const db = firestore();
+    const db = admin.firestore();
 
     // Delete wishlist
     const snap = await db.collection('wishlist').doc(wishlistId).delete();

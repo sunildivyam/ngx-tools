@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { auth, firestore, remoteConfig } from 'firebase-admin';
+import * as admin from 'firebase-admin';
 
 import {
   fromDbFormat,
@@ -8,7 +8,6 @@ import {
 } from '../../common/services/common.service';
 import { AuthErrorCodes } from 'firebase/auth';
 import { Profile } from '@annuadvent/ngx-core/helpers-auth';
-import { RemoteConfigTemplate } from 'firebase-admin/lib/remote-config/remote-config-api';
 import { getRemoteConfigParamValue } from '../../common/helpers/remote-config-helper';
 import { GlobalConfigParamsEnum } from '@annuadvent/ngx-core/global-config';
 
@@ -45,7 +44,7 @@ export const getProfile = async (
   initFireApp();
 
   const uid = req.params.uid;
-  const db = firestore();
+  const db = admin.firestore();
 
   try {
     const result = await db.collection('user-profiles').doc(uid).get();
@@ -76,8 +75,8 @@ export const addProfile = async (
 
   // filter in only profile params, from remoteconfig
   const profileData = await filterProfileForParams(req.body);
-  const fAuth = auth();
-  const db = firestore();
+  const fAuth = admin.auth();
+  const db = admin.firestore();
 
   try {
     // check if user exists
@@ -121,8 +120,8 @@ export const updateProfile = async (
 
   const id = req.params.id;
   const profileData = await filterProfileForParams(req.body);
-  const fAuth = auth();
-  const db = firestore();
+  const fAuth = admin.auth();
+  const db = admin.firestore();
 
   try {
     // check if user exists
@@ -163,8 +162,8 @@ export const deleteProfile = async (
   initFireApp();
 
   const id = req.params.id;
-  const fAuth = auth();
-  const db = firestore();
+  const fAuth = admin.auth();
+  const db = admin.firestore();
 
   try {
     // check if user exists

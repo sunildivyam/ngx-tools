@@ -20,7 +20,6 @@ export const getRemoteConfig = async (
   try {
     const fConfig = remoteConfig();
     const rConfig: RemoteConfigTemplate = await fConfig.getTemplate();
-
     res.status(200).send(rConfig);
   } catch (error) {
     res.status(500).send(error);

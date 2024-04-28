@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { firestore } from 'firebase-admin';
+import * as admin from 'firebase-admin';
 
 import {
   fromDbFormat,
@@ -23,7 +23,7 @@ export const getProducts = async (
     initFireApp();
     const uid = req['currentUser'].uid;
 
-    const db = firestore();
+    const db = admin.firestore();
     const snap = await db.collection('products').where('uid', '==', uid).get();
     const products = snap.docs.map((doc) => new Product(fromDbFormat(doc)));
 
@@ -53,7 +53,7 @@ export const addProduct = async (
     const productToAdd = new Product(req.body);
     productToAdd.uid = uid;
 
-    const db = firestore();
+    const db = admin.firestore();
     try {
       const snapE = await db.collection('products').doc(productToAdd.id).get();
       const product = new Product(fromDbFormat(snapE));
@@ -101,7 +101,7 @@ export const updateProduct = async (
     const productToUpdate = new Product(req.body);
     productToUpdate.uid = uid;
 
-    const db = firestore();
+    const db = admin.firestore();
     const snap = await db
       .collection('products')
       .doc(id)
@@ -132,7 +132,7 @@ export const deleteProduct = async (
 
     const productId = req.params.id;
 
-    const db = firestore();
+    const db = admin.firestore();
 
     // TODO: Check if, there are any unprocessed orders of the this product
 

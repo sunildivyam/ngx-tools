@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { firestore } from 'firebase-admin';
+import * as admin from 'firebase-admin';
 
 import {
   fromDbFormat,
@@ -22,7 +22,7 @@ export const getCategories = async (
   initFireApp();
 
   try {
-    const db = firestore();
+    const db = admin.firestore();
     const snap = await db.collection('categories').get();
     const categories = snap.docs.map((doc) => new Category(fromDbFormat(doc)));
 
@@ -51,7 +51,7 @@ export const addCategory = async (
   categoryToAdd.uid = uid;
 
   try {
-    const db = firestore();
+    const db = admin.firestore();
     const result = await db
       .collection('categories')
       .doc(categoryToAdd.id)
@@ -87,7 +87,7 @@ export const updateCategory = async (
   categoryToUpdate.uid = uid;
 
   try {
-    const db = firestore();
+    const db = admin.firestore();
     const snap = await db
       .collection('categories')
       .doc(id)
@@ -119,7 +119,7 @@ export const deleteCategory = async (
   const categoryId = req.params.id;
 
   try {
-    const db = firestore();
+    const db = admin.firestore();
 
     // TODO: Check if it is not referenced from any other category or product
     const snapR = await db
@@ -159,18 +159,17 @@ export const listLiveCategories = async (
   res: Response,
   next: NextFunction
 ) => {
-  initFireApp();
-
   try {
-    const db = firestore();
+    const appD = initFireApp();
+    const db = admin.firestore();
     const snap = await db
       .collection('categories')
       .where('isLive', '==', true)
       .get();
     const categories = snap.docs.map((doc) => new Category(fromDbFormat(doc)));
-
     res.status(200).send(categories);
   } catch (error) {
+    console.log('Cat- Error', error);
     res.status(500).send(error);
   }
 };

@@ -1,11 +1,11 @@
 import { GlobalConfigParamsEnum } from '@annuadvent/ngx-core/global-config';
-import { remoteConfig } from 'firebase-admin';
+import * as admin from 'firebase-admin';
 import { RemoteConfigTemplate } from 'firebase-admin/lib/remote-config/remote-config-api';
 
 export const getRemoteConfigParamValue = async (
   paramName: GlobalConfigParamsEnum
 ): Promise<any> => {
-  const fConfig = remoteConfig();
+  const fConfig = admin.remoteConfig();
   const rConfig: RemoteConfigTemplate = await fConfig.getTemplate();
 
   const pParam = rConfig.parameters[paramName];

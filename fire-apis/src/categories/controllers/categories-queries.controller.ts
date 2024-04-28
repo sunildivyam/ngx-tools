@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { firestore } from 'firebase-admin';
+import * as admin from 'firebase-admin';
 
 import {
   fromDbFormat,
@@ -7,6 +7,7 @@ import {
   toDbFormat
 } from '../../common/services/common.service';
 import { Category } from '@annuadvent/ngx-core/helpers-categories';
+import { AppError } from '@annuadvent/ngx-core/app-error';
 
 /**
  * GET
@@ -21,15 +22,13 @@ export const getCategory = async (
 ) => {
   const id = req.params.id;
 
-  initFireApp();
-
   try {
-    const db = firestore();
+    initFireApp();
+    const db = admin.firestore();
     const snap = await db.collection('categories').doc(id).get();
     const category = new Category(fromDbFormat(snap));
-
     res.status(200).send(category);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).send(new AppError(error));
   }
 };
