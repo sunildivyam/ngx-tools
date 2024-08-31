@@ -2,6 +2,7 @@ import * as crypto from 'node:crypto';
 import * as zlib from 'node:zlib';
 import { Readable } from 'node:stream';
 import * as debugPkg from 'debug';
+// To authorize GoogleAuth, install gcloud for windows and run from project directory: >> gcloud auth application-default login
 import { GoogleAuth } from 'google-auth-library';
 import { NextFunction, Request, Response } from 'express';
 import { initFireApp } from '../../common/services/common.service';
